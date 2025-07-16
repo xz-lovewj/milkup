@@ -1,0 +1,73 @@
+{
+  "name": "milkup",
+  "version": "0.0.1",
+  "scripts": {
+    "build:main": "esbuild src/main/index.ts --bundle --platform=node --external:electron --outfile=dist-electron/main/index.js",
+    "build:preload": "esbuild src/preload.ts --bundle --platform=neutral --outfile=dist-electron/preload.js --external:electron --format=cjs",
+    "build": "pnpm run build:preload && pnpm run build:main && vite build",
+    "dev": "concurrently -k \"cross-env VITE_DEV_SERVER_URL=http://localhost:5173 pnpm run start:electron\" \"vite\"",
+    "start:electron": "pnpm run build:preload && pnpm run build:main && electron dist-electron/main/index.js",
+    "dist": "pnpm run build && electron-builder"
+  },
+  "main": "dist-electron/main/index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron"
+    ]
+  },
+  "build": {
+    "appId": "com.auto-plugin.milkup",
+    "productName": "MilkUp",
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*"
+    ],
+    "icon": "src/assets/icons/milkup",
+    "fileAssociations": [
+      {
+        "ext": "md",
+        "name": "Markdown Document",
+        "description": "Markdown File",
+        "role": "Editor",
+        "icon": "src/assets/icons/milkup"
+      }
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  },
+  "dependencies": {
+    "@milkdown/core": "^7.15.1",
+    "@milkdown/crepe": "^7.15.1",
+    "@milkdown/kit": "^7.15.1",
+    "@milkdown/plugin-listener": "^7.15.1",
+    "@milkdown/plugin-prism": "^7.15.1",
+    "@milkdown/preset-gfm": "^7.15.1",
+    "@milkdown/theme-nord": "^7.15.1",
+    "@milkdown/utils": "^7.15.1",
+    "@milkdown/vue": "^7.15.1",
+    "@vue/runtime-dom": "^3.5.17",
+    "vue": "^3.5.17"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.13",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "concurrently": "^9.2.0",
+    "cross-env": "^7.0.3",
+    "electron": "^37.2.2",
+    "electron-builder": "^26.0.12",
+    "esbuild": "^0.25.6",
+    "less": "^4.3.0",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.4"
+  }
+}
