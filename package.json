@@ -1,6 +1,7 @@
 {
   "name": "milkup",
   "version": "0.0.1",
+  "description": "A Markdown editor built with Milkdown and Vue.js",
   "scripts": {
     "build:main": "esbuild src/main/index.ts --bundle --platform=node --external:electron --outfile=dist-electron/main/index.js",
     "build:preload": "esbuild src/preload.ts --bundle --platform=neutral --outfile=dist-electron/preload.js --external:electron --format=cjs",

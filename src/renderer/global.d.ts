@@ -6,5 +6,6 @@ interface Window {
     on: (channel: string, listener: (...args: any[]) => void) => void
     removeListener: (channel: string, listener: (...args: any[]) => void) => void
     windowControl: (action: 'minimize' | 'maximize' | 'close') => void
+    onOpenFileAtLaunch: (cb: (payload: { filePath: string, content: string }) => void) => void
   }
 }

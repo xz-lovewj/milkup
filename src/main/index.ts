@@ -1,5 +1,6 @@
 import { app, BrowserWindow, globalShortcut } from 'electron'
 import * as path from 'path'
+import * as fs from 'fs'
 import { registerIpcHandleHandlers, registerIpcOnHandlers } from './ipcBridge'
 import createMenu from './menu'
 
@@ -35,10 +36,27 @@ async function createWindow() {
     win.webContents.openDevTools()
   }
 }
+function sendLaunchFileIfExists() {
+  const fileArg = process.argv.find(arg => arg.endsWith('.md') || arg.endsWith('.markdown'))
+
+  if (fileArg) {
+    const absolutePath = path.resolve(fileArg)
+    if (fs.existsSync(absolutePath)) {
+      const content = fs.readFileSync(absolutePath, 'utf-8')
+      win.webContents.send('open-file-at-launch', {
+        filePath: absolutePath,
+        content,
+      })
+    } else {
+      console.warn('[main] 文件不存在:', absolutePath)
+    }
+  }
+}
 
 app.whenReady().then(async () => {
   await createWindow()
   createMenu(win)
+  sendLaunchFileIfExists()
   registerIpcOnHandlers(win)
   registerIpcHandleHandlers(win)
 })

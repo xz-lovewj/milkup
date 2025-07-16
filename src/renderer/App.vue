@@ -7,9 +7,9 @@ import { watch } from 'vue'
 import Titlebar from './components/Titlebar.vue'
 import MenuBar from './components/MenuBar.vue'
 import { openFileRefreshFlag } from '@/hooks/useFile'
-
 const { updateTitle } = useTitle()
 const { markdown } = useContent()
+
 
 watch(markdown, () => {
   updateTitle()
@@ -24,6 +24,4 @@ watch(markdown, () => {
   </MilkdownProvider>
 </template>
 
-<style scoped lang="less">
-
-</style>
+<style scoped lang="less"></style>
