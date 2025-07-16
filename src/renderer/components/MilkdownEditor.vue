@@ -12,7 +12,7 @@ const emit = defineEmits<{
 useEditor((root) => {
   const crepe = new Crepe({
     root,
-    defaultValue: props.modelValue.toString(),
+    defaultValue: props.modelValue.toString()
   })
   crepe.on((lm) => {
     lm.updated(() => {
@@ -24,5 +24,15 @@ useEditor((root) => {
 </script>
 
 <template>
-  <Milkdown />
+  <div class="scrollView">
+    <Milkdown />
+  </div>
 </template>
+<style scoped lang="less">
+.scrollView {
+  height: 100%;
+  overflow-y: auto;
+  padding: 12px;
+  background: #fff;
+}
+</style>

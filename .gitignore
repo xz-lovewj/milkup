@@ -10,6 +10,7 @@ yarn-error.log*
 
 # Dependency directories
 dist/
+dist-electron/
 out/
 build/
 
