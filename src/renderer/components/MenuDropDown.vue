@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import MenuBar from './MenuBar.vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import { openFileRefreshFlag } from '@/hooks/useFile'
 import logo from '@/assets/icons/milkup.ico'
 
 const isOpen = ref(false)
+
+watch(openFileRefreshFlag, () => {
+  isOpen.value = false
+})
 </script>
 
 <template>

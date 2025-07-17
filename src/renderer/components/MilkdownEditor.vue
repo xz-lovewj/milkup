@@ -3,6 +3,7 @@ import { Milkdown, useEditor } from '@milkdown/vue'
 import { Crepe } from '@milkdown/crepe'
 import StatusBar from './StatusBar.vue'
 import { outline } from '@milkdown/kit/utils'
+import { onBeforeMount } from 'vue'
 
 const props = defineProps<{
   modelValue: string
@@ -10,26 +11,27 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
 }>()
-
-const crepe = useEditor((root) => {
-  const crepe = new Crepe({
-    root,
-    defaultValue: props.modelValue.toString(),
-    featureConfigs: {
-      placeholder: {
-        text: '开始写点什么吧...',
-        mode: 'doc'
+onBeforeMount(() => {
+  const crepe = useEditor((root) => {
+    const crepe = new Crepe({
+      root,
+      defaultValue: props.modelValue.toString(),
+      featureConfigs: {
+        placeholder: {
+          text: '开始写点什么吧...',
+          mode: 'doc'
+        }
       }
-    }
-  })
-  crepe.on((lm) => {
-    lm.updated(() => {
-      emit('update:modelValue', crepe.getMarkdown())
     })
+    crepe.on((lm) => {
+      lm.updated(() => {
+        emit('update:modelValue', crepe.getMarkdown())
+      })
+    })
+    return crepe
   })
-  return crepe
+  crepe.get()?.action(outline())
 })
-crepe.get()?.action(outline())
 </script>
 
 <template>

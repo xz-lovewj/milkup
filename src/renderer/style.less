@@ -16,6 +16,18 @@ html {
   flex-direction: column;
   color: var(--text-color);
 }
+// 滚动条样式
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-track {
+  background-color: var(--background-color-2);
+}
 .milkdown {
   height: 100%;
   .editor {
@@ -26,6 +38,22 @@ html {
         height: 100%;
       }
     }
+  }
+}
+.ProseMirror-focused.ProseMirror .prosemirror-virtual-cursor {
+  --prosemirror-virtual-cursor-color: #73777f;
+  border-left: 2px solid var(--prosemirror-virtual-cursor-color);
+  animation: prosemirror-virtual-cursor-blink 1s linear infinite;
+  animation-delay: 0.1s;
+  transform: translateX(1px);
+}
+@keyframes prosemirror-virtual-cursor-blink {
+  0%,
+  100% {
+    opacity: 1 !important;
+  }
+  50% {
+    opacity: 0;
   }
 }
 .milkdown .milkdown-image-block > .image-wrapper img {

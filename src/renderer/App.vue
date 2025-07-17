@@ -22,8 +22,8 @@ watch(theme, () => {
 
 <template>
   <Titlebar />
-  <MilkdownProvider>
-    <MilkdownEditor v-model="markdown" v-if="!openFileRefreshFlag" />
+  <MilkdownProvider v-if="!openFileRefreshFlag">
+    <MilkdownEditor v-model="markdown" />
   </MilkdownProvider>
 </template>
 

@@ -11,13 +11,14 @@ function applyTheme(newTheme: Theme) {
   const html = document.documentElement
   if (newTheme === 'dark') {
     html.classList.add('dark')
-    switchMilkTheme('dark')
+    // switchMilkTheme('dark')
   } else {
     html.classList.remove('dark')
-    switchMilkTheme('light')
+    // switchMilkTheme('light')
   }
   localStorage.setItem('theme', newTheme)
 }
+// @ts-ignore
 function switchMilkTheme(theme: 'light' | 'dark') {
   const id = 'milkdown-theme'
   let link = document.getElementById(id) as HTMLLinkElement | null
@@ -28,10 +29,14 @@ function switchMilkTheme(theme: 'light' | 'dark') {
     link.rel = 'stylesheet'
     document.head.appendChild(link)
   }
+  let basePath = ''
+  if (import.meta.env.PROD) {
+    basePath = '../renderer/public'
+  }
   if (theme === 'light') {
-    link.href = '/milkdown-themes/nord/style.css'
+    link.href = `${basePath}/milkdown-themes/nord/style.css`
   } else {
-    link.href = `/milkdown-themes/nord-dark/style.css`
+    link.href = `${basePath}/milkdown-themes/nord-dark/style.css`
   }
 }
 export default function useTheme() {
