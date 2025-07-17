@@ -1,5 +1,5 @@
 // useFile.ts
-import { nextTick, ref } from "vue"
+import { nextTick, onUnmounted, ref } from "vue"
 import usContent from "./useContent"
 import useTitle from "./useTitle"
 
@@ -72,6 +72,10 @@ function registerMenuEventsOnce() {
 registerMenuEventsOnce()
 
 export default function useFile() {
+  onUnmounted(() => {
+    window.electronAPI?.removeListener?.('menu-open', onOpen)
+    window.electronAPI?.removeListener?.('menu-save', onSave)
+  })
   return {
     openFileRefreshFlag,
     reBuildMilkdown,
