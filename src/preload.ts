@@ -1,10 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
-window.__MAC__ = process.platform === 'darwin'
-window.__WIN__ = process.platform === 'win32'
-window.__LINUX__ = process.platform === 'linux'
-window.__PLATFORM__ = process.platform
-
 contextBridge.exposeInMainWorld('electronAPI', {
   openFile: () => ipcRenderer.invoke('dialog:openFile'),
   saveFile: (filePath: string | null, content: string) => ipcRenderer.invoke('dialog:saveFile', { filePath, content }),
@@ -14,5 +9,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   setTitle: (filePath: string | null) => ipcRenderer.send('set-title', filePath),
   windowControl: (action: 'minimize' | 'maximize' | 'close') => ipcRenderer.send('window-control', action),
   onOpenFileAtLaunch: (cb: (payload: { filePath: string, content: string }) => void) => { ipcRenderer.once('open-file-at-launch', (_event, payload) => { cb(payload) }) },
-  openExternal: (url: string) => ipcRenderer.send('shell:openExternal', url)
+  openExternal: (url: string) => ipcRenderer.send('shell:openExternal', url),
+  platform: process.platform
 })

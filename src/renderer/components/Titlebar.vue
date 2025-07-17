@@ -2,8 +2,8 @@
 import { ref } from "vue"
 import useTitle from "../../hooks/useTitle"
 import MenuDropDown from "./MenuDropDown.vue"
-import { isWin } from "../lib/os"
 
+const isWin = window.electronAPI.platform === 'win32'
 const { title } = useTitle()
 
 const isFullScreen = ref(false)
