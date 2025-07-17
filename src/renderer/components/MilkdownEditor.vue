@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Milkdown, useEditor } from '@milkdown/vue'
 import { Crepe } from '@milkdown/crepe'
+import StatusBar from './StatusBar.vue';
 
 const props = defineProps<{
   modelValue: string
@@ -27,12 +28,15 @@ useEditor((root) => {
   <div class="scrollView">
     <Milkdown />
   </div>
+  <StatusBar :content="modelValue" />
 </template>
 <style scoped lang="less">
 .scrollView {
   height: 100%;
   overflow-y: auto;
-  padding: 12px;
   background: #fff;
+  > div {
+    height: 100%;
+  }
 }
 </style>

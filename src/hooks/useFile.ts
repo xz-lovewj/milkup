@@ -7,7 +7,6 @@ const { markdown, filePath, originalContent } = usContent()
 
 export const openFileRefreshFlag = ref(false)
 const useFile = () => {
-  console.log('useFile::: ', "useFile");
   window.electronAPI.onOpenFileAtLaunch(({ filePath: launchFilePath, content }) => {
     openFileRefreshFlag.value = true
     markdown.value = content
@@ -40,6 +39,14 @@ const useFile = () => {
       updateTitle()
     }
   }
+  const onSaveAs = async () => {
+    const result = await window.electronAPI.saveFileAs(markdown.value)
+    if (result) {
+      filePath.value = result.filePath
+      originalContent.value = markdown.value // 更新原始内容为当前内容
+      updateTitle()
+    }
+  }
 
   onMounted(() => {
     window.electronAPI?.on?.('menu-open', onOpen)
@@ -55,6 +62,7 @@ const useFile = () => {
     openFileRefreshFlag,
     onOpen,
     onSave,
+    onSaveAs
   }
 }
 export default useFile

@@ -1,6 +1,6 @@
 // ipcBridge.ts
 
-import { dialog, ipcMain } from 'electron'
+import { dialog, ipcMain, shell } from 'electron'
 import * as fs from 'fs'
 import path from 'path'
 
@@ -27,6 +27,9 @@ export function registerIpcOnHandlers(win: Electron.BrowserWindow) {
         win.close()
         break
     }
+  })
+  ipcMain.on('shell:openExternal', (_event, url) => {
+    shell.openExternal(url)
   })
 }
 
@@ -55,5 +58,14 @@ export function registerIpcHandleHandlers(win: Electron.BrowserWindow) {
     }
     fs.writeFileSync(filePath, content, 'utf-8')
     return filePath
+  })
+  // 文件另存为对话框
+  ipcMain.handle('dialog:saveFileAs', async (_event, content) => {
+    const { canceled, filePath } = await dialog.showSaveDialog(win, {
+      filters: [{ name: 'Markdown', extensions: ['md', 'markdown'] }]
+    })
+    if (canceled || !filePath) return null
+    fs.writeFileSync(filePath, content, 'utf-8')
+    return { filePath }
   })
 }

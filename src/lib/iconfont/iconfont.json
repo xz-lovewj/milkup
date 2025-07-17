@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "8760187",
+      "name": "github",
+      "font_class": "github",
+      "unicode": "e64c",
+      "unicode_decimal": 58956
+    },
+    {
       "icon_id": "44930630",
       "name": "milkup",
       "font_class": "logo",

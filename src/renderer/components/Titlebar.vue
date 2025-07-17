@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import useTitle from '../../hooks/useTitle'
+import MenuDropDown from './MenuDropDown.vue'
 
 const { title } = useTitle()
 
@@ -17,6 +18,7 @@ const close = () => window.electronAPI?.windowControl?.('close')
 
 <template>
   <div class="TitlebarBox">
+    <MenuDropDown />
     <div class="title" @dblclick="toggleMaximize">{{ title }}</div>
     <div class="window-controls">
       <span @click="minimize" class="iconfont icon-min"></span>
