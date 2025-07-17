@@ -1,28 +1,36 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import usefile from '@/hooks/useFile'
-import ThemeSetter from './ThemeSetter.vue'
 import About from './About.vue'
+import SettingBase from './SettingBase.vue'
 
 const { onOpen, onSave, onSaveAs } = usefile()
 
-const isShowSetTheme = ref(false)
-function showSetTheme() {
-  isShowSetTheme.value = !isShowSetTheme.value
+const activeTab = ref<'settings' | 'about'>('about')
+const MenuComponents = {
+  settings: SettingBase,
+  about: About
 }
+const MenuOptions = [
+  { label: '📂 打开', action: onOpen },
+  { label: '💾 保存', action: onSave },
+  { label: '💾 另存为', action: onSaveAs },
+  { label: '⚙️ 设置', action: () => (activeTab.value = 'settings'), value: 'settings' },
+  { label: 'ℹ️ 关于', action: () => (activeTab.value = 'about'), value: 'about' }
+]
 </script>
 
 <template>
   <div class="MenubarBox">
     <div class="optionsContainer">
-      <span @click="onOpen">📂 打开</span>
-      <span @click="onSave">💾 保存</span>
-      <span @click="onSaveAs">💾 另存为</span>
-      <span @click="showSetTheme">🌞 主题</span>
+      <span v-for="option in MenuOptions" :key="option.label" @click="option.action" :class="{ active: activeTab === option.value }">
+        {{ option.label }}
+      </span>
     </div>
     <div class="detailContainer">
-      <ThemeSetter v-if="isShowSetTheme" />
-      <About v-else />
+      <div class="components">
+        <component :is="MenuComponents[activeTab]" />
+      </div>
     </div>
   </div>
 </template>
@@ -35,7 +43,9 @@ function showSetTheme() {
     flex: 1;
     padding: 12px;
     background: var(--background-color-2);
-
+    .components {
+      height: 100%;
+    }
   }
   .optionsContainer {
     display: flex;
@@ -59,6 +69,10 @@ function showSetTheme() {
       color: var(--text-color);
       &:hover {
         background: var(--hover-color);
+      }
+      &.active {
+        background: var(--active-color);
+        font-weight: bold;
       }
     }
   }

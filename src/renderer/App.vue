@@ -5,13 +5,18 @@ import useContent from '@/hooks/useContent'
 import useTitle from '@/hooks/useTitle'
 import { watch } from 'vue'
 import Titlebar from './components/Titlebar.vue'
-import { openFileRefreshFlag } from '@/hooks/useFile'
+import useFile from '@/hooks/useFile'
+import useTheme from '@/hooks/useTheme'
 const { updateTitle } = useTitle()
 const { markdown } = useContent()
-
+const { theme } = useTheme()
+const { reBuildMilkdown, openFileRefreshFlag } = useFile()
 
 watch(markdown, () => {
   updateTitle()
+})
+watch(theme, () => {
+  reBuildMilkdown()
 })
 </script>
 

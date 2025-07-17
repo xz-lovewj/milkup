@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Milkdown, useEditor } from '@milkdown/vue'
 import { Crepe } from '@milkdown/crepe'
-import StatusBar from './StatusBar.vue';
+import StatusBar from './StatusBar.vue'
+import { outline } from '@milkdown/kit/utils'
 
 const props = defineProps<{
   modelValue: string
@@ -10,10 +11,16 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
 }>()
 
-useEditor((root) => {
+const crepe = useEditor((root) => {
   const crepe = new Crepe({
     root,
-    defaultValue: props.modelValue.toString()
+    defaultValue: props.modelValue.toString(),
+    featureConfigs: {
+      placeholder: {
+        text: '开始写点什么吧...',
+        mode: 'doc'
+      }
+    }
   })
   crepe.on((lm) => {
     lm.updated(() => {
@@ -22,6 +29,7 @@ useEditor((root) => {
   })
   return crepe
 })
+crepe.get()?.action(outline())
 </script>
 
 <template>
@@ -34,7 +42,7 @@ useEditor((root) => {
 .scrollView {
   height: 100%;
   overflow-y: auto;
-  background: #fff;
+  background: var(--background-color-1);
   > div {
     height: 100%;
   }

@@ -55,21 +55,4 @@ const isOpen = ref(false)
     animation: fade-in 0.3s linear;
   }
 }
-.fade-enter-active,
-.fade-leave-active {
-  transition: 0.3s linear;
-}
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-  height: 0 !important;
-}
-@keyframes fade-in {
-  from {
-    height: 0;
-  }
-  to {
-    height: 100%;
-  }
-}
 </style>

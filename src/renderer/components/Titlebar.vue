@@ -32,8 +32,8 @@ const close = () => window.electronAPI?.windowControl?.('close')
 .TitlebarBox {
   -webkit-app-region: drag; /* ✅ 允许拖动窗口 */
   height: 32px;
-  background: #e0e0e0;
-  color: #333;
+  background: var(--background-color-1);
+  color: var(--text-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -46,10 +46,10 @@ const close = () => window.electronAPI?.windowControl?.('close')
     span {
       cursor: pointer;
       font-size: 16px;
-      color: #333;
+      color: var(--text-color-1);
       padding: 8px;
       &:hover {
-        background: #d0d0d0;
+        background: var(--hover-color);
       }
       &.icon-close:hover {
         background: #ff5f56;

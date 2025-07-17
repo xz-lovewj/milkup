@@ -47,6 +47,13 @@ const useFile = () => {
       updateTitle()
     }
   }
+  const reBuildMilkdown = () => {
+    // 重新构建 Milkdown 编辑器
+    openFileRefreshFlag.value = true
+    nextTick(() => {
+      openFileRefreshFlag.value = false
+    })
+  }
 
   onMounted(() => {
     window.electronAPI?.on?.('menu-open', onOpen)
@@ -60,6 +67,7 @@ const useFile = () => {
 
   return {
     openFileRefreshFlag,
+    reBuildMilkdown,
     onOpen,
     onSave,
     onSaveAs

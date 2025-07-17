@@ -11,7 +11,7 @@ const displayText = computed(() => {
   const text = props.content ?? ''
   switch (mode.value) {
     case 'chars':
-      return `${(text || '').replace(/\s/g, '').length} 字符`
+      return `${countMarkdownChars(text)} 字符`
     case 'lines':
       return `${countMarkdownLines(text)} 行`
   }
@@ -28,6 +28,9 @@ function countMarkdownLines(text: string, options = { skipEmpty: true }): number
   }
   return rawLines.length
 }
+function countMarkdownChars(text: string): number {
+  return (text.replaceAll('&#x20;', '').trim() || '').split('').length
+}
 </script>
 
 <template>
@@ -42,7 +45,8 @@ function countMarkdownLines(text: string, options = { skipEmpty: true }): number
   cursor: pointer;
   padding: 4px 8px;
   font-size: 14px;
-  color: #666;
+  color: var(--text-color-1);
   text-align: right;
+  background: var(--background-color-2);
 }
 </style>
