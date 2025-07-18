@@ -3,7 +3,7 @@
   <h1>MilkUp</h1>
 </div>
 
-MilkUp 是一个桌面端 Markdown 编辑器, 目前支持 windows (其他平台即将支持)。
+MilkUp 是一个桌面端 Markdown 编辑器, 目前支持 windows、MacOS、Linux(需自行打包)。
 
 ## 项目简介
 
