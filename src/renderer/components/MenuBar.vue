@@ -12,18 +12,18 @@ const MenuComponents = {
   about: About
 }
 const MenuOptions = [
-  { label: '📂 打开', action: onOpen },
-  { label: '💾 保存', action: onSave },
-  { label: '💾 另存为', action: onSaveAs },
-  { label: '⚙️ 设置', action: () => (activeTab.value = 'settings'), value: 'settings' },
-  { label: 'ℹ️ 关于', action: () => (activeTab.value = 'about'), value: 'about' }
+  { label: '打开', action: onOpen, icon: 'icon-data-select' },
+  { label: '保存', action: onSave, icon: 'icon-baocun' },
+  { label: '另存为', action: onSaveAs, icon: 'icon-baocun' },
+  { label: '设置', action: () => (activeTab.value = 'settings'), icon: 'icon-config-props', value: 'settings' },
+  { label: '关于', action: () => (activeTab.value = 'about'), icon: 'icon-github', value: 'about' }
 ]
 </script>
 
 <template>
   <div class="MenubarBox">
     <div class="optionsContainer">
-      <span v-for="option in MenuOptions" :key="option.label" @click="option.action" :class="{ active: activeTab === option.value }">
+      <span v-for="option in MenuOptions" :key="option.label" @click="option.action" class="iconfont" :class="{ active: activeTab === option.value, [option.icon]: true }">
         {{ option.label }}
       </span>
     </div>
@@ -66,7 +66,13 @@ const MenuOptions = [
       font-size: 14px;
       display: flex;
       align-items: center;
+      gap: 8px;
       color: var(--text-color);
+      &::before {
+        font-size: 16px;
+        transform: translateY(1px);
+        font-weight: 100 !important;
+      }
       &:hover {
         background: var(--hover-color);
       }

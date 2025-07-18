@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import useSourceCode from '@/hooks/useSourceCode'
 
+const { isShowSource, toggleSourceCode } = useSourceCode()
 const props = defineProps<{
   content: string
 }>()
@@ -35,7 +37,11 @@ function countMarkdownChars(text: string): number {
 
 <template>
   <div class="StatusBarBox" @click="cycleMode">
-    {{ displayText }}
+    <span class="iconfont" @click.stop="toggleSourceCode" :class="isShowSource ? 'icon-input' : 'icon-markdown'">
+    </span>
+    <span>
+      {{ displayText }}
+    </span>
   </div>
 </template>
 
@@ -43,10 +49,18 @@ function countMarkdownChars(text: string): number {
 .StatusBarBox {
   user-select: none;
   cursor: pointer;
-  padding: 4px 8px;
   font-size: 14px;
   color: var(--text-color-1);
   text-align: right;
   background: var(--background-color-2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  span{
+    padding: 2px 8px;
+    &:hover{
+      background: var(--hover-color);
+    }
+  }
 }
 </style>

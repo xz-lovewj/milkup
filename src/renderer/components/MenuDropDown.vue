@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import MenuBar from './MenuBar.vue'
-import { ref, watch } from 'vue'
-import { openFileRefreshFlag } from '@/hooks/useFile'
+import { ref } from 'vue'
+import emitter from '../events'
 import logo from '@/assets/icons/milkup.ico'
 
 const isOpen = ref(false)
-
-watch(openFileRefreshFlag, () => {
+emitter.on('file:Change', () => {
   isOpen.value = false
 })
 </script>

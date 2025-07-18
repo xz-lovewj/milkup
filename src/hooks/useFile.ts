@@ -1,23 +1,23 @@
 // useFile.ts
-import { nextTick, onUnmounted, ref } from "vue"
+import { nextTick, onUnmounted } from "vue"
 import usContent from "./useContent"
 import useTitle from "./useTitle"
+import emitter from "@/renderer/events";
+
 
 const { updateTitle } = useTitle()
 const { markdown, filePath, originalContent } = usContent()
 
-export const openFileRefreshFlag = ref(false)
 
 const onOpen = async () => {
   const result = await window.electronAPI.openFile()
   if (result) {
-    openFileRefreshFlag.value = true
     filePath.value = result.filePath
     markdown.value = result.content
     originalContent.value = result.content
     updateTitle()
     nextTick(() => {
-      openFileRefreshFlag.value = false
+      emitter.emit('file:Change')
     })
   }
 }
@@ -40,13 +40,6 @@ const onSaveAs = async () => {
   }
 }
 
-const reBuildMilkdown = () => {
-  openFileRefreshFlag.value = true
-  nextTick(() => {
-    openFileRefreshFlag.value = false
-  })
-}
-
 // ✅ 注册事件：只执行一次（确保是单例）
 let hasRegistered = false
 function registerMenuEventsOnce() {
@@ -54,13 +47,12 @@ function registerMenuEventsOnce() {
   hasRegistered = true
 
   window.electronAPI?.onOpenFileAtLaunch?.(({ filePath: launchFilePath, content }) => {
-    openFileRefreshFlag.value = true
     markdown.value = content
     filePath.value = launchFilePath
     originalContent.value = content
     updateTitle()
     nextTick(() => {
-      openFileRefreshFlag.value = false
+      emitter.emit('file:Change')
     })
   })
 
@@ -77,8 +69,6 @@ export default function useFile() {
     window.electronAPI?.removeListener?.('menu-save', onSave)
   })
   return {
-    openFileRefreshFlag,
-    reBuildMilkdown,
     onOpen,
     onSave,
     onSaveAs

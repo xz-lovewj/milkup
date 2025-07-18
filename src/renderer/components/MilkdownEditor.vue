@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Milkdown, useEditor } from '@milkdown/vue'
 import { Crepe } from '@milkdown/crepe'
-import StatusBar from './StatusBar.vue'
 import { outline } from '@milkdown/kit/utils'
 import { onBeforeMount } from 'vue'
 
@@ -38,7 +37,6 @@ onBeforeMount(() => {
   <div class="scrollView">
     <Milkdown />
   </div>
-  <StatusBar :content="modelValue" />
 </template>
 <style scoped lang="less">
 .scrollView {

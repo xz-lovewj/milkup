@@ -6,6 +6,48 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "42575459",
+      "name": "config-props",
+      "font_class": "config-props",
+      "unicode": "e64f",
+      "unicode_decimal": 58959
+    },
+    {
+      "icon_id": "6010916",
+      "name": "保存",
+      "font_class": "baocun",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    },
+    {
+      "icon_id": "42575409",
+      "name": "input",
+      "font_class": "input",
+      "unicode": "e648",
+      "unicode_decimal": 58952
+    },
+    {
+      "icon_id": "42575513",
+      "name": "script",
+      "font_class": "script",
+      "unicode": "e656",
+      "unicode_decimal": 58966
+    },
+    {
+      "icon_id": "44219855",
+      "name": "data-select",
+      "font_class": "data-select",
+      "unicode": "e66b",
+      "unicode_decimal": 58987
+    },
+    {
+      "icon_id": "44223737",
+      "name": "markdown",
+      "font_class": "markdown",
+      "unicode": "e66c",
+      "unicode_decimal": 58988
+    },
+    {
       "icon_id": "8760187",
       "name": "github",
       "font_class": "github",

@@ -1,5 +1,6 @@
 * {
   box-sizing: border-box;
+  outline: none;
 }
 body,
 html {
@@ -38,6 +39,25 @@ html {
         height: 100%;
       }
     }
+  }
+}
+.editor-container {
+  border: none !important;
+  border-radius: 0 !important;
+}
+.cm-gutters {
+  background-color: var(--background-color-2) !important;
+  border-right: none !important;
+}
+.cm-activeLine,
+.cm-activeLineGutter {
+  background-color: var(--active-line-color) !important;
+}
+.cm-content {
+  background: var(--background-color-2);
+  .cm-line::selection {
+    background: var(--selected-background-color) !important;
+    color: var(--selected-color);
   }
 }
 .ProseMirror-focused.ProseMirror .prosemirror-virtual-cursor {
