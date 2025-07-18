@@ -3,6 +3,8 @@ import { Milkdown, useEditor } from '@milkdown/vue'
 import { Crepe } from '@milkdown/crepe'
 import { outline } from '@milkdown/kit/utils'
 import { onBeforeMount } from 'vue'
+import Outline from './Outline.vue'
+import emitter from '../events'
 
 const props = defineProps<{
   modelValue: string
@@ -11,7 +13,7 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
 }>()
 onBeforeMount(() => {
-  const crepe = useEditor((root) => {
+  useEditor((root) => {
     const crepe = new Crepe({
       root,
       defaultValue: props.modelValue.toString(),
@@ -25,26 +27,37 @@ onBeforeMount(() => {
     crepe.on((lm) => {
       lm.updated(() => {
         emit('update:modelValue', crepe.getMarkdown())
+        const ctx = crepe.editor.ctx
+        const headings = outline()(ctx)
+        emitter.emit('outline:Update', headings)
       })
     })
     return crepe
   })
-  crepe.get()?.action(outline())
 })
 </script>
 
 <template>
-  <div class="scrollView">
-    <Milkdown />
+  <div class="editor-box">
+    <Outline />
+    <div class="scrollView">
+      <Milkdown />
+    </div>
   </div>
 </template>
 <style scoped lang="less">
-.scrollView {
+.editor-box {
+  width: 100%;
   height: 100%;
-  overflow-y: auto;
-  background: var(--background-color-1);
-  > div {
+  display: flex;
+  .scrollView {
+    flex: 1;
     height: 100%;
+    overflow-y: auto;
+    background: var(--background-color-1);
+    > div {
+      height: 100%;
+    }
   }
 }
 </style>

@@ -35,8 +35,6 @@ function handleClickOutside() {
 <style lang="less" scoped>
 .ThemeSetterBox {
   width: 100%;
-  height: calc(100% - 20px);
-  padding: 20px;
   .theme-options {
     position: relative;
     display: flex;

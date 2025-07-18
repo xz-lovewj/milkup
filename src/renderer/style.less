@@ -29,6 +29,13 @@ html {
 ::-webkit-scrollbar-track {
   background-color: var(--background-color-2);
 }
+input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  position: relative;
+  top: 1.5px;
+}
 .milkdown {
   height: 100%;
   .editor {
@@ -44,6 +51,7 @@ html {
 .editor-container {
   border: none !important;
   border-radius: 0 !important;
+  background: var(--background-color-2) !important;
 }
 .cm-gutters {
   background-color: var(--background-color-2) !important;
