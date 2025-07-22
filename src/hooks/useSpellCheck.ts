@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 function applySpellCheck(isEnabled: boolean) {
   const html = document.querySelector(".milkdown") as HTMLElement;
@@ -14,7 +14,13 @@ function applySpellCheck(isEnabled: boolean) {
 export default function useSpellCheck() {
   const isSpellCheckEnabled = ref(localStorage.getItem("spellcheck") === "true");
   applySpellCheck(isSpellCheckEnabled.value);
-
+  onMounted(() => {
+    const savedSpellCheck = localStorage.getItem("spellcheck");
+    if (savedSpellCheck) {
+      isSpellCheckEnabled.value = savedSpellCheck === "true";
+      applySpellCheck(isSpellCheckEnabled.value);
+    }
+  });
   return {
     isSpellCheckEnabled,
     applySpellCheck

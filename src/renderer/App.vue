@@ -10,6 +10,8 @@ import useSourceCode from '@/hooks/useSourceCode'
 import MarkdownSourceEditor from './components/MarkdownSourceEditor.vue'
 import emitter from './events'
 import StatusBar from './components/StatusBar.vue'
+import Outline from './components/Outline.vue'
+import { isShowOutline } from '@/hooks/useOutline'
 const { updateTitle } = useTitle()
 const { markdown } = useContent()
 const { theme } = useTheme()
@@ -35,11 +37,36 @@ function reBuildMilkdown() {
 
 <template>
   <Titlebar />
-  <MilkdownProvider v-if="isShowEditos && !isShowSource">
-    <MilkdownEditor v-model="markdown" />
-  </MilkdownProvider>
-  <MarkdownSourceEditor v-else-if="isShowEditos && isShowSource" v-model="markdown" />
+  <div class="editorArea" v-if="isShowEditos">
+    <Transition name="fade" mode="out-in">
+      <div class="outlineBox" v-show="isShowOutline">
+        <Outline />
+      </div>
+    </Transition>
+    <div class="editorBox">
+      <MilkdownProvider v-if="!isShowSource">
+        <MilkdownEditor v-model="markdown" />
+      </MilkdownProvider>
+      <MarkdownSourceEditor v-else-if="isShowSource" v-model="markdown" />
+    </div>
+  </div>
   <StatusBar :content="markdown" />
 </template>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.editorArea {
+  height: 0;
+  flex: 1;
+  display: flex;
+
+  .outlineBox {
+    width: 25%;
+    height: 100%;
+  }
+
+  .editorBox {
+    flex: 1;
+    width: 0;
+  }
+}
+</style>
