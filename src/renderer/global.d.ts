@@ -9,6 +9,8 @@ interface Window {
     windowControl: (action: 'minimize' | 'maximize' | 'close') => void
     onOpenFileAtLaunch: (cb: (payload: { filePath: string, content: string }) => void) => void
     openExternal: (url: string) => Promise<void>
+    getFilePathInClipboard: () => Promise<string | null>
+    wirteTempImage: (file: ArrayBufferLike) => Promise<string>
     platform: NodeJS.Platform
   }
 }

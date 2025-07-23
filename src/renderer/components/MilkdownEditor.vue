@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { Milkdown, useEditor } from '@milkdown/vue'
-import { Crepe } from '@milkdown/crepe'
+import { upload, uploadConfig } from '@milkdown/kit/plugin/upload'
 import { outline } from '@milkdown/kit/utils'
-import { onBeforeMount } from 'vue'
+import { onMounted } from 'vue'
 import emitter from '../events'
 import { Ctx } from '@milkdown/kit/ctx'
+import { uploader } from '@/plugins/customPastePlugin'
+import { Editor, rootCtx, defaultValueCtx } from '@milkdown/core'
+import { commonmark } from '@milkdown/preset-commonmark'
+import { listener, listenerCtx } from '@milkdown/plugin-listener'
 
 const props = defineProps<{
   modelValue: string
@@ -12,31 +15,23 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
 }>()
-onBeforeMount(() => {
-  useEditor((root) => {
-    const crepe = new Crepe({
-      root,
-      defaultValue: props.modelValue.toString(),
-      featureConfigs: {
-        placeholder: {
-          text: '开始写点什么吧...',
-          mode: 'doc'
-        }
-      }
+onMounted(async () => {
+  const editor = await Editor.make()
+    .config(ctx => {
+      ctx.set(rootCtx, "#milkdown");
+      ctx.set(defaultValueCtx, props.modelValue.toString());
+      ctx.update(uploadConfig.key, (prev) => ({ ...prev, uploader, }))
     })
-    crepe.on((lm) => {
-      lm.updated(() => {
-        emit('update:modelValue', crepe.getMarkdown())
-        const ctx = crepe.editor.ctx
-        emitOutlineUpdate(ctx)
-      })
-      lm.mounted(() => {
-        emit('update:modelValue', crepe.getMarkdown())
-        const ctx = crepe.editor.ctx
-        emitOutlineUpdate(ctx)
-      })
+    .use(commonmark)
+    .use(listener)
+    .use(upload)
+    .create()
+  editor.action((ctx) => {
+    ctx.get(listenerCtx).markdownUpdated((_ctx, nextMarkdown) => {
+      emit('update:modelValue', nextMarkdown)
+      emitOutlineUpdate(ctx)
     })
-    return crepe
+    emitOutlineUpdate(ctx)
   })
 })
 function emitOutlineUpdate(ctx: Ctx) {
@@ -48,7 +43,7 @@ function emitOutlineUpdate(ctx: Ctx) {
 <template>
   <div class="editor-box">
     <div class="scrollView">
-      <Milkdown />
+      <div id="milkdown"></div>
     </div>
   </div>
 </template>

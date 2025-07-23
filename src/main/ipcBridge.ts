@@ -1,6 +1,6 @@
 // ipcBridge.ts
 
-import { dialog, ipcMain, shell } from 'electron'
+import { clipboard, dialog, ipcMain, shell } from 'electron'
 import * as fs from 'fs'
 import path from 'path'
 
@@ -67,5 +67,33 @@ export function registerIpcHandleHandlers(win: Electron.BrowserWindow) {
     if (canceled || !filePath) return null
     fs.writeFileSync(filePath, content, 'utf-8')
     return { filePath }
+  })
+  // 获取剪贴板中的文件路径
+  ipcMain.handle('clipboard:getFilePath', async () => {
+    const platform = process.platform;
+    try {
+      if (platform === 'win32') {
+        const buf = clipboard.readBuffer('FileNameW');
+        const raw = buf.toString('ucs2').replace(/\u0000/g, '');
+        return raw.split('\r\n').filter(s => s.trim())[0] || null;
+      } else if (platform === 'darwin') {
+        const url = clipboard.read('public.file-url');
+        return url ? [url.replace('file://', '')] : [];
+      } else {
+        return [];
+      }
+    } catch {
+      return [];
+    }
+  })
+  // 将临时图片写入剪贴板
+  ipcMain.handle('clipboard:writeTempImage', async (_event, file: ArrayBufferLike) => {
+    const tempDir = path.join(__dirname, 'temp');
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir);
+    }
+    const filePath = path.join(tempDir, `temp-image-${Date.now()}.png`);
+    fs.writeFileSync(filePath, file as Buffer);
+    return filePath;
   })
 }

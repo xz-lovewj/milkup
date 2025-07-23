@@ -10,16 +10,18 @@ function handleChangeTheme(selectedTheme: string) {
   isShowThemeDropdown.value = false
 }
 function handleClickOutside() {
-  isShowThemeDropdown.value && (isShowThemeDropdown.value = false)
+  setTimeout(() => {
+    isShowThemeDropdown.value && (isShowThemeDropdown.value = false)
+  }, 100)
 }
 </script>
 
 <template>
-  <div class="ThemeSetterBox" @click.stop="handleClickOutside">
+  <div class="ThemeSetterBox">
     <div class="theme-options">
-      <span>当前主题：</span>
-      <span @click.stop="isShowThemeDropdown = !isShowThemeDropdown" class="dropdownBtn">
-        <span>{{ theme }}</span>
+      <span class="dropdownBtn">
+        <input :value="theme" class="disableInput" @focus="isShowThemeDropdown = true" @blur="handleClickOutside"
+          readonly></input>
         <Transition name="fade">
           <div class="dropdownPanel" v-show="isShowThemeDropdown" :style="{ height: defaultThemes.length * 40 + 'px' }">
             <div class="dropdown-items" v-for="t in defaultThemes">
@@ -35,11 +37,26 @@ function handleClickOutside() {
 <style lang="less" scoped>
 .ThemeSetterBox {
   width: 100%;
+
   .theme-options {
     position: relative;
     display: flex;
     align-items: center;
+
+    .disableInput {
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--text-color);
+      background: var(--background-color-2);
+      border: 1px solid var(--border-color-2);
+      padding: 8px;
+      border-radius: 4px;
+    }
   }
+
   .dropdownPanel {
     position: absolute;
     width: 100%;
@@ -51,18 +68,23 @@ function handleClickOutside() {
     z-index: 1000;
     max-height: 200px;
     overflow-y: auto;
+
     .dropdown-items {
       display: flex;
       flex-direction: column;
+
       &:hover {
         background: var(--hover-color);
       }
+
       span {
         padding: 8px;
         cursor: pointer;
+
         &:hover {
           background: var(--hover-background-color-2);
         }
+
         &.active {
           background: var(--active-background-color);
           font-weight: bold;
@@ -70,16 +92,14 @@ function handleClickOutside() {
       }
     }
   }
+
   .dropdownBtn {
     display: inline-block;
     position: relative;
     cursor: pointer;
-    padding: 8px;
-    background: var(--background-color-2);
     color: var(--text-color);
-    border-radius: 4px;
     transition: background 0.3s;
-    border: 1px solid var(--border-color-2);
+
     span {
       display: inline-block;
       min-width: 150px;

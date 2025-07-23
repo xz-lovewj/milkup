@@ -10,5 +10,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   windowControl: (action: 'minimize' | 'maximize' | 'close') => ipcRenderer.send('window-control', action),
   onOpenFileAtLaunch: (cb: (payload: { filePath: string, content: string }) => void) => { ipcRenderer.once('open-file-at-launch', (_event, payload) => { cb(payload) }) },
   openExternal: (url: string) => ipcRenderer.send('shell:openExternal', url),
+  getFilePathInClipboard: () => ipcRenderer.invoke('clipboard:getFilePath'),
+  wirteTempImage: (file: File) => ipcRenderer.invoke('clipboard:writeTempImage', file),
+
   platform: process.platform
 })
