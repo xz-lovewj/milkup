@@ -10,7 +10,7 @@ function handleSpellCheckChange() {
 <template>
   <div class="SpellCheckSetterBox">
     <span class="switch">
-      <input type="checkbox" id="spellcheck" v-model="isSpellCheckEnabled" @change="handleSpellCheckChange" />
+      <input type="checkbox" id="spellcheck" v-model="isSpellCheckEnabled" @input="handleSpellCheckChange" />
       <label for="spellcheck">启用拼写检查</label>
     </span>
   </div>
@@ -19,5 +19,10 @@ function handleSpellCheckChange() {
 <style lang="less" scoped>
 .SpellCheckSetterBox {
   width: 100%;
+  cursor: pointer;
+
+  label {
+    cursor: pointer;
+  }
 }
 </style>

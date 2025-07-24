@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ThemeSetter from './ThemeSetter.vue'
 import SpellCheckSetter from './SpellCheckSetter.vue';
-import UploadConfig from './UploadConfig.vue';
+import ImageConfig from './ImageConfig.vue';
 </script>
 
 <template>
@@ -16,7 +16,7 @@ import UploadConfig from './UploadConfig.vue';
     </div>
     <div class="settingItem">
       <span class="title">当图片粘贴时</span>
-      <UploadConfig />
+      <ImageConfig />
     </div>
   </div>
 </template>

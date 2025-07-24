@@ -56,6 +56,9 @@ importers:
       '@vue/runtime-dom':
         specifier: ^3.5.17
         version: 3.5.17
+      autolog.js:
+        specifier: ^3.0.1
+        version: 3.0.1
       mitt:
         specifier: ^3.0.1
         version: 3.0.1
@@ -939,6 +942,9 @@ packages:
   at-least-node@1.0.0:
     resolution: {integrity: sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==}
     engines: {node: '>= 4.0.0'}
+
+  autolog.js@3.0.1:
+    resolution: {integrity: sha512-LYRzQGmhuvq9Xco4YsPcgw3GrUxkygPyKeK8b0pyRHdnbQohB4MxRytAGYbXrwRxWT03l3NP0iCnqAnFcqlp3w==}
 
   bail@2.0.2:
     resolution: {integrity: sha512-0xO6mYd7JB2YesxDKplafRpsiOzPt9V02ddPCLbY1xYGPOX24NTyN50qnUxgCPcSoYMhKpAuBTjQoRZCAkUDRw==}
@@ -3832,6 +3838,8 @@ snapshots:
   asynckit@0.4.0: {}
 
   at-least-node@1.0.0: {}
+
+  autolog.js@3.0.1: {}
 
   bail@2.0.2: {}
 

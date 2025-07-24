@@ -1,10 +1,10 @@
 import { Uploader } from '@milkdown/kit/plugin/upload'
-import type { Node } from '@milkdown/kit/prose/model'
+import type { Node, Schema } from '@milkdown/kit/prose/model'
 import { uploadImage } from '@/api'
 
 export const uploader: Uploader = async (files, schema) => {
   const images: File[] = []
-
+  const pasteMethod = localStorage.getItem('pasteMethod') as 'local' | 'base64' | 'remote'
   for (let i = 0; i < files.length; i++) {
     const file = files.item(i)
     if (!file) {
@@ -18,27 +18,52 @@ export const uploader: Uploader = async (files, schema) => {
 
     images.push(file)
   }
-  const filePath = await window.electronAPI.getFilePathInClipboard()
-  if (filePath) {
-    const fileName = filePath.split('/').pop() || 'image.png'
-    return [schema.nodes.image.createAndFill({ src: filePath, alt: fileName }) as Node]
-  } else {
-    const arrayBuffer = await images[0].arrayBuffer();
-    const buffer = new Uint8Array(arrayBuffer);
-    const path = await window.electronAPI.wirteTempImage(buffer);
-    return [schema.nodes.image.createAndFill({ src: path, alt: images[0].name }) as Node]
+  const nodes: Node[] = []
+  for (const image of images) {
+    if (pasteMethod === 'base64') {
+      const base64 = await turnToBase64(image)
+      nodes.push(schema.nodes.image.createAndFill({ src: base64, alt: image.name }) as Node)
+      continue
+    }
+    if (pasteMethod === 'remote') {
+      try {
+        await upload(image, nodes, schema)
+      } catch (error) {
+        console.error('Image upload failed:', error)
+        continue
+      }
+    }
+    if (pasteMethod === 'local') {
+      try {
+        await local(image, nodes, schema)
+      } catch (error) {
+        console.error('Local image handling failed:', error)
+        continue
+      }
+    }
   }
-  const nodes: Node[] = await Promise.all(
-    images.map(async (image) => {
-      const src = await uploadImage(image)
-      const alt = image.name
-      return schema.nodes.image.createAndFill({
-        src,
-        alt,
-      }) as Node
-    })
-  )
-
   return nodes
 }
-
+function turnToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result as string)
+    reader.onerror = (error) => reject(error)
+    reader.readAsDataURL(file)
+  })
+}
+async function upload(image: File, nodes: Node[], schema: Schema<any, any>) {
+  const src = await uploadImage(image)
+  nodes.push(schema.nodes.image.createAndFill({ src, alt: image.name }) as Node)
+}
+async function local(image: File, nodes: Node[], schema: Schema<any, any>) {
+  const filePath = await window.electronAPI.getFilePathInClipboard()
+  if (filePath) {
+    nodes.push(schema.nodes.image.createAndFill({ src: filePath, alt: image.name }) as Node)
+  } else {
+    const arrayBuffer = await image.arrayBuffer()
+    const buffer = new Uint8Array(arrayBuffer)
+    const filePath = await window.electronAPI.wirteTempImage(buffer)
+    nodes.push(schema.nodes.image.createAndFill({ src: filePath, alt: image.name }) as Node)
+  }
+}

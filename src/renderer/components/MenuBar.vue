@@ -6,7 +6,7 @@ import SettingBase from './SettingBase.vue'
 
 const { onOpen, onSave, onSaveAs } = usefile()
 
-const activeTab = ref<'settings' | 'about'>('about')
+const activeTab = ref<'settings' | 'about'>('settings')
 const MenuComponents = {
   settings: SettingBase,
   about: About
@@ -23,7 +23,8 @@ const MenuOptions = [
 <template>
   <div class="MenubarBox">
     <div class="optionsContainer">
-      <span v-for="option in MenuOptions" :key="option.label" @click="option.action" class="iconfont" :class="{ active: activeTab === option.value, [option.icon]: true }">
+      <span v-for="option in MenuOptions" :key="option.label" @click="option.action" class="iconfont"
+        :class="{ active: activeTab === option.value, [option.icon]: true }">
         {{ option.label }}
       </span>
     </div>
@@ -39,14 +40,17 @@ const MenuOptions = [
 .MenubarBox {
   height: 100%;
   display: flex;
+
   .detailContainer {
     flex: 1;
     padding: 12px;
     background: var(--background-color-2);
+
     .components {
       height: 100%;
     }
   }
+
   .optionsContainer {
     display: flex;
     flex-direction: column;
@@ -68,14 +72,17 @@ const MenuOptions = [
       align-items: center;
       gap: 8px;
       color: var(--text-color);
+
       &::before {
         font-size: 16px;
         transform: translateY(1px);
         font-weight: 100 !important;
       }
+
       &:hover {
         background: var(--hover-color);
       }
+
       &.active {
         background: var(--active-color);
         font-weight: bold;

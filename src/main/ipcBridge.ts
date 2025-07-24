@@ -88,7 +88,7 @@ export function registerIpcHandleHandlers(win: Electron.BrowserWindow) {
   })
   // 将临时图片写入剪贴板
   ipcMain.handle('clipboard:writeTempImage', async (_event, file: ArrayBufferLike) => {
-    const tempDir = path.join(__dirname, 'temp');
+    const tempDir = path.join(__dirname, localStorage.getItem('localImagePath') || 'localImagePath');
     if (!fs.existsSync(tempDir)) {
       fs.mkdirSync(tempDir);
     }

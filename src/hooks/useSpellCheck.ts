@@ -1,14 +1,16 @@
-import { onMounted, ref } from "vue";
+import { nextTick, onMounted, ref } from "vue";
 
 function applySpellCheck(isEnabled: boolean) {
-  const html = document.querySelector(".milkdown") as HTMLElement;
-  if (isEnabled) {
-    html.setAttribute("spellcheck", "true");
-    localStorage.setItem("spellcheck", "true");
-  } else {
-    html.setAttribute("spellcheck", "false");
-    localStorage.setItem("spellcheck", "false");
-  }
+  nextTick(() => {
+    const html = document.documentElement;
+    if (isEnabled) {
+      html.setAttribute("spellcheck", "true");
+      localStorage.setItem("spellcheck", "true");
+    } else {
+      html.setAttribute("spellcheck", "false");
+      localStorage.setItem("spellcheck", "false");
+    }
+  })
 }
 
 export default function useSpellCheck() {
