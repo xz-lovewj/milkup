@@ -37,7 +37,7 @@ function handleChangeLoaclPath() {
     </div>
     <div class="details">
       <div v-if="pasteMethod === 'local'">
-        <Input v-model="localPath" placeholder="本地文件路径" label="本地文件路径" @change="handleChangeLoaclPath"/>
+        <Input v-model="localPath" placeholder="/temp" label="本地文件路径" @change="handleChangeLoaclPath"/>
       </div>
       <div v-if="pasteMethod === 'base64'">图片将自动转为 base64（可能会增大文件体积）</div>
       <UploadConfig v-if="pasteMethod === 'remote'" />

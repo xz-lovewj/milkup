@@ -32,7 +32,8 @@ function countMarkdownLines(text: string, options = { skipEmpty: true }): number
   return rawLines.length
 }
 function countMarkdownChars(text: string): number {
-  return (text.replaceAll('&#x20;', '').trim() || '').split('').length
+  const base64Regex = /data:image\/[a-zA-Z]+;base64,[a-zA-Z0-9+/=]+/g
+  return (text.replaceAll('&#x20;', '').replace(base64Regex, 'image').trim() || '').split('').length
 }
 </script>
 
@@ -40,7 +41,8 @@ function countMarkdownChars(text: string): number {
   <div class="StatusBarBox">
     <div>
       <span class="iconfont icon-List-outlined" @click="toggleShowOutline"></span>
-      <span class="iconfont" @click.stop="toggleSourceCode" :class="isShowSource ? 'icon-input' : 'icon-markdown'"> </span>
+      <span class="iconfont" @click.stop="toggleSourceCode" :class="isShowSource ? 'icon-input' : 'icon-markdown'">
+      </span>
     </div>
     <span @click="cycleMode">{{ displayText }}</span>
   </div>
@@ -57,8 +59,10 @@ function countMarkdownChars(text: string): number {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   span {
     padding: 2px 8px;
+
     &:hover {
       background: var(--hover-color);
     }

@@ -10,7 +10,7 @@ interface Window {
     onOpenFileAtLaunch: (cb: (payload: { filePath: string, content: string }) => void) => void
     openExternal: (url: string) => Promise<void>
     getFilePathInClipboard: () => Promise<string | null>
-    wirteTempImage: (file: ArrayBufferLike) => Promise<string>
+    wirteTempImage: (file: ArrayBufferLike, tempPath: string) => Promise<string>
     platform: NodeJS.Platform
   }
 }
