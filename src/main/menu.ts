@@ -35,10 +35,13 @@ export default function createMenu(win: BrowserWindow) {
     {
       label: '视图',
       submenu: [
-        { label: '重新加载', accelerator: 'CmdOrCtrl+R', role: 'reload' },
-        { label: '强制重新加载', accelerator: 'CmdOrCtrl+Shift+R', role: 'forceReload' },
         { label: '实际大小', accelerator: 'CmdOrCtrl+0', role: 'resetZoom' },
-        { label: '全屏', accelerator: 'F11', role: 'togglefullscreen' }
+        { label: '全屏', accelerator: 'F11', role: 'togglefullscreen' },
+        {
+          label: '切换视图', accelerator: 'CmdOrCtrl+\/', click: () => {
+            win.webContents.send('view:toggleView');
+          }
+        }
       ]
     },
     {

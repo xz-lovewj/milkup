@@ -29,8 +29,10 @@ const MenuOptions = [
       </span>
     </div>
     <div class="detailContainer">
-      <div class="components">
-        <component :is="MenuComponents[activeTab]" />
+      <div class="scrollView">
+        <div class="components">
+          <component :is="MenuComponents[activeTab]" />
+        </div>
       </div>
     </div>
   </div>
@@ -43,11 +45,24 @@ const MenuOptions = [
 
   .detailContainer {
     flex: 1;
+    height: calc(100% - 24px);
     padding: 12px;
+    padding-top: 0;
+    padding-right: 0;
     background: var(--background-color-2);
+
+    .scrollView {
+      height: 100%;
+      overflow-y: auto;
+      background: var(--background-color-2);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
 
     .components {
       height: 100%;
+      padding-top: 12px;
     }
   }
 

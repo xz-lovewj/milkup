@@ -1,4 +1,5 @@
 @import url('./styles/milkdown.less');
+@import url('./styles/codemirror.less');
 * {
   box-sizing: border-box;
   outline: none;
@@ -43,21 +44,6 @@ input[type='checkbox'] {
   border: none !important;
   border-radius: 0 !important;
   background: var(--background-color-2) !important;
-}
-.cm-gutters {
-  background-color: var(--background-color-2) !important;
-  border-right: none !important;
-}
-.cm-activeLine,
-.cm-activeLineGutter {
-  background-color: var(--active-line-color) !important;
-}
-.cm-content {
-  background: var(--background-color-2);
-  .cm-line::selection {
-    background: var(--selected-background-color) !important;
-    color: var(--selected-color);
-  }
 }
 
 .link {
