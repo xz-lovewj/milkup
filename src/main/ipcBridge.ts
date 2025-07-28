@@ -4,6 +4,8 @@ import { clipboard, dialog, ipcMain, shell } from 'electron'
 import * as fs from 'fs'
 import path from 'path'
 
+let isSaved = true
+
 // 所有 on 类型监听
 export function registerIpcOnHandlers(win: Electron.BrowserWindow) {
   ipcMain.on('set-title', (_event, filePath: string | null) => {
@@ -12,8 +14,7 @@ export function registerIpcOnHandlers(win: Electron.BrowserWindow) {
       : 'MilkUp - Untitled'
     win.setTitle(title)
   })
-  ipcMain.on('window-control', (_event, action) => {
-    console.log('action::: ', action);
+  ipcMain.on('window-control', async (_event, action) => {
     if (!win) return
     switch (action) {
       case 'minimize':
@@ -24,12 +25,33 @@ export function registerIpcOnHandlers(win: Electron.BrowserWindow) {
         else win.maximize()
         break
       case 'close':
-        win.close()
+        if (isSaved) {
+          win.close()
+        } else {
+          const options: Electron.MessageBoxSyncOptions = {
+            type: 'warning',
+            title: '确认关闭',
+            message: '当前文档有未保存的修改，是否确认关闭？',
+            buttons: ['确认', '保存并关闭', '取消'],
+            defaultId: 1,
+            cancelId: 2
+          }
+          const response = dialog.showMessageBoxSync(win, options)
+          if (response === 0) {
+            win.close()
+          } else if (response === 1) {
+            win.webContents.send('menu-save', true)
+          }
+        }
         break
     }
   })
   ipcMain.on('shell:openExternal', (_event, url) => {
     shell.openExternal(url)
+  })
+  ipcMain.on('change-save-status', (_event, isSavedStatus) => {
+    isSaved = isSavedStatus
+    win.webContents.send('save-status-changed', isSaved)
   })
 }
 

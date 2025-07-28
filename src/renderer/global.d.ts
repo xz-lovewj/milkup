@@ -4,6 +4,7 @@ interface Window {
     saveFile: (filePath: string | null, content: string) => Promise<string | null>
     saveFileAs: (content: string) => Promise<{ filePath: string } | null>
     setTitle: (filePath: string | null) => void
+    changeSaveStatus: (isSaved: boolean) => void
     on: (channel: string, listener: (...args: any[]) => void) => void
     removeListener: (channel: string, listener: (...args: any[]) => void) => void
     windowControl: (action: 'minimize' | 'maximize' | 'close') => void

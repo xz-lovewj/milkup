@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import useTitle from "../../hooks/useTitle"
-import useContent from "@/hooks/useContent"
 import MenuDropDown from "./MenuDropDown.vue"
-import useFile from "@/hooks/useFile"
 
 const isWin = window.electronAPI.platform === 'win32'
 const { title } = useTitle()
-const { isModified } = useContent()
-const { onSave } = useFile()
 
 const isFullScreen = ref(false)
 const minimize = () => {
@@ -19,25 +15,7 @@ const toggleMaximize = () => {
   window.electronAPI?.windowControl?.("maximize")
 }
 const close = async function () {
-  if (isModified.value) {
-    const confirmClose = await window.electronAPI?.showMessageBoxSync({
-      type: 'warning',
-      title: '确认关闭',
-      message: '当前文档有未保存的修改，是否确认关闭？',
-      buttons: ['确认', '保存并关闭', '取消'],
-      defaultId: 1,
-      cancelId: 2
-    })
-    if (confirmClose.response == 0) window.electronAPI?.windowControl?.("close")
-    else if (confirmClose.response == 1) {
-      const isSaved = await onSave()
-      if (isSaved) window.electronAPI?.windowControl?.("close")
-      else return
-    }
-    else return
-  } else {
-    window.electronAPI?.windowControl?.("close")
-  }
+  window.electronAPI?.windowControl?.("close")
 }
 </script>
 
