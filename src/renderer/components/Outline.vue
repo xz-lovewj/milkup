@@ -19,6 +19,7 @@ function onOiClick(oi: { id: string; text: string; level: number }) {
         @click="onOiClick(oi)">
         {{ oi.text }}
       </span>
+      <span class="empty" v-if="outline.length == 0">暂无内容</span>
     </div>
   </div>
 </template>
@@ -37,7 +38,11 @@ function onOiClick(oi: { id: string; text: string; level: number }) {
     flex-direction: column;
     gap: 6px;
     width: 100%;
-
+    .empty {
+      color: var(--text-color-3);
+      font-size: 14px;
+      text-align: center;
+    }
     .outlineItem {
       width: 100%;
       color: var(--text-color-1);
