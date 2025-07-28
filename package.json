@@ -67,7 +67,6 @@
     "@milkdown/crepe": "^7.15.2",
     "@milkdown/kit": "^7.15.2",
     "@milkdown/plugin-automd": "^7.15.2",
-    "@milkdown/plugin-history": "^7.15.2",
     "@milkdown/plugin-listener": "^7.15.2",
     "@milkdown/plugin-prism": "^7.15.2",
     "@milkdown/preset-commonmark": "^7.15.2",

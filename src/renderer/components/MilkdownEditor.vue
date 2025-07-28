@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { upload, uploadConfig } from '@milkdown/kit/plugin/upload'
-import { history } from '@milkdown/plugin-history'
 import { uploader } from '@/plugins/customPastePlugin'
 import { listener, listenerCtx } from '@milkdown/plugin-listener'
 import { outline } from '@milkdown/kit/utils'
@@ -56,7 +55,6 @@ onMounted(async () => {
 
   editor.use(commonmark)
     .use(listener)
-    .use(history)
     .use(automd)
     .use(upload)
   await crepe.create()
