@@ -3,7 +3,7 @@ import useSpellCheck from '@/hooks/useSpellCheck'
 
 const { isSpellCheckEnabled, applySpellCheck } = useSpellCheck()
 function handleSpellCheckChange() {
-  applySpellCheck(isSpellCheckEnabled.value)
+  applySpellCheck(!isSpellCheckEnabled.value)
 }
 </script>
 
