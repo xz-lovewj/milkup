@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { upload, uploadConfig } from '@milkdown/kit/plugin/upload'
 import { uploader } from '@/plugins/customPastePlugin'
-import { listener, listenerCtx } from '@milkdown/plugin-listener'
 import { outline } from '@milkdown/kit/utils'
 import { onMounted } from 'vue'
 import { Ctx } from '@milkdown/kit/ctx'
@@ -23,26 +22,7 @@ onMounted(async () => {
   // 还有在源码模式下 支持自定义字体大小调节
   // 还有 还有 electron 的桌面 极限值做个限制
   // 还有 切换 源码和预览模式 以及 目录打开与关闭 搞个可以自定义的快捷键
-  
-  // const editor = await Editor.make()
-  //   .config(ctx => {
-  //     ctx.set(rootCtx, "#milkdown");
-  //     ctx.set(defaultValueCtx, props.modelValue.toString());
-  //     ctx.update(uploadConfig.key, (prev) => ({ ...prev, uploader, }))
-  //   })
-  //   .use(commonmark)
-  //   .use(listener)
-  //   .use(history)
-  //   .use(upload)
-  //   .use(automd)
-  //   .create()
-  // editor.action((ctx) => {
-  //   ctx.get(listenerCtx).markdownUpdated((_ctx, nextMarkdown) => {
-  //     emit('update:modelValue', nextMarkdown)
-  //     emitOutlineUpdate(ctx)
-  //   })
-  //   emitOutlineUpdate(ctx)
-  // })
+
   // crepe 有更好的用户体验👇
   const crepe = new Crepe({
     root: document.querySelector('#milkdown') as HTMLElement,
@@ -54,26 +34,22 @@ onMounted(async () => {
       },
     }
   })
+  crepe.on((lm) => {
+    lm.markdownUpdated((Ctx, nextMarkdown) => {
+      emit('update:modelValue', nextMarkdown)
+      emitOutlineUpdate(Ctx)
+    })
+    lm.mounted((Ctx) => {
+      emitOutlineUpdate(Ctx)
+    })
+  })
   const editor = crepe.editor
   editor.ctx.inject(uploadConfig.key)
-  editor.ctx.inject(listenerCtx)
-
   editor.use(commonmark)
-    .use(listener)
     .use(automd)
     .use(upload)
   await crepe.create()
-  editor.action((ctx) => {
-    ctx.get(listenerCtx).markdownUpdated((_ctx, nextMarkdown) => {
-      emit('update:modelValue', nextMarkdown)
-      emitOutlineUpdate(ctx)
-    })
-    emitOutlineUpdate(ctx)
-  })
   editor.ctx.update(uploadConfig.key, (prev) => ({ ...prev, uploader }))
-  editor.ctx.update(listenerCtx, (prev) => {
-    return prev
-  })
 })
 function emitOutlineUpdate(ctx: Ctx) {
   const headings = outline()(ctx)
