@@ -39,7 +39,7 @@ function reBuildMilkdown() {
   <Titlebar />
   <div class="editorArea" v-if="isShowEditors">
     <Transition name="fade" mode="out-in">
-      <div class="outlineBox" v-show="isShowOutline">
+      <div class="outlineBox" v-show="isShowOutline && !isShowSource">
         <Outline />
       </div>
     </Transition>
@@ -62,6 +62,7 @@ function reBuildMilkdown() {
   .outlineBox {
     width: 25%;
     height: 100%;
+    transition: 0.2s;
   }
 
   .editorBox {

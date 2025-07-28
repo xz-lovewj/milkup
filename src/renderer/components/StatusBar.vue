@@ -40,7 +40,9 @@ function countMarkdownChars(text: string): number {
 <template>
   <div class="StatusBarBox">
     <div>
-      <span class="iconfont icon-List-outlined" @click="toggleShowOutline"></span>
+      <Transition name="fade">
+        <span class="iconfont icon-List-outlined" @click="toggleShowOutline" v-if="!isShowSource"></span>
+      </Transition>
       <span class="iconfont" @click.stop="toggleSourceCode" :class="isShowSource ? 'icon-input' : 'icon-markdown'">
       </span>
     </div>
@@ -62,7 +64,7 @@ function countMarkdownChars(text: string): number {
 
   span {
     padding: 2px 8px;
-
+    display: inline-block;
     &:hover {
       background: var(--hover-color);
     }

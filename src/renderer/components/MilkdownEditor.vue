@@ -19,6 +19,11 @@ const emit = defineEmits<{
 }>()
 
 onMounted(async () => {
+  // 预览模式下支持自定义css文件路径解析
+  // 还有在源码模式下 支持自定义字体大小调节
+  // 还有 还有 electron 的桌面 极限值做个限制
+  // 还有 切换 源码和预览模式 以及 目录打开与关闭 搞个可以自定义的快捷键
+  
   // const editor = await Editor.make()
   //   .config(ctx => {
   //     ctx.set(rootCtx, "#milkdown");
