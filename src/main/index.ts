@@ -5,6 +5,7 @@ import { registerIpcHandleHandlers, registerIpcOnHandlers } from './ipcBridge'
 import createMenu from './menu'
 
 let win: BrowserWindow
+let isQuiting = false
 
 async function createWindow() {
   win = new BrowserWindow({
@@ -26,6 +27,13 @@ async function createWindow() {
   globalShortcut.register('CommandOrControl+Shift+I', () => {
     if (win) win.webContents.openDevTools()
   })
+  
+  // 注册 Cmd+Q 快捷键来退出应用
+  if (process.platform === 'darwin') {
+    globalShortcut.register('Command+Q', () => {
+      app.exit(0)
+    })
+  }
   const indexPath = path.join(__dirname, '../../dist', 'index.html')
 
   if (process.env.VITE_DEV_SERVER_URL) {
@@ -37,6 +45,17 @@ async function createWindow() {
   if (process.env.VITE_DEV_SERVER_URL) {
     win.webContents.openDevTools()
   }
+  
+  // 处理窗口关闭事件
+  win.on('close', (event) => {
+    if (process.platform === 'darwin') {
+      // 在 macOS 上，点击关闭按钮时隐藏窗口而不是退出应用
+      if (!isQuiting) {
+        event.preventDefault()
+        win.hide()
+      }
+    }
+  })
 }
 function sendLaunchFileIfExists() {
   const fileArg = process.argv.find(arg => arg.endsWith('.md') || arg.endsWith('.markdown'))
@@ -64,6 +83,26 @@ app.whenReady().then(async () => {
 })
 
 
+
+
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit()
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+})
+
+// macOS 上处理应用激活事件
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow()
+  } else {
+    // 如果窗口存在但被隐藏，则显示它
+    if (win && !win.isVisible()) {
+      win.show()
+    }
+    // 将窗口置于前台
+    if (win) {
+      win.focus()
+    }
+  }
 })
