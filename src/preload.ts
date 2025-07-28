@@ -12,7 +12,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onOpenFileAtLaunch: (cb: (payload: { filePath: string, content: string }) => void) => { ipcRenderer.once('open-file-at-launch', (_event, payload) => { cb(payload) }) },
   openExternal: (url: string) => ipcRenderer.send('shell:openExternal', url),
   getFilePathInClipboard: () => ipcRenderer.invoke('clipboard:getFilePath'),
-  wirteTempImage: (file: File, tempPath: string) => ipcRenderer.invoke('clipboard:writeTempImage', file, tempPath),
+  writeTempImage: (file: File, tempPath: string) => ipcRenderer.invoke('clipboard:writeTempImage', file, tempPath),
   showMessageBoxSync: (options: Electron.MessageBoxSyncOptions) => ipcRenderer.invoke('dialog:OpenDialog', options),
   platform: process.platform
 })
