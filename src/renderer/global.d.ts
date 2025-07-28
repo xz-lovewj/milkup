@@ -11,6 +11,7 @@ interface Window {
     openExternal: (url: string) => Promise<void>
     getFilePathInClipboard: () => Promise<string | null>
     wirteTempImage: (file: ArrayBufferLike, tempPath: string) => Promise<string>
+    showMessageBoxSync: (options: Electron.MessageBoxSyncOptions) => Promise<Electron.MessageBoxReturnValue>
     platform: NodeJS.Platform
   }
 }

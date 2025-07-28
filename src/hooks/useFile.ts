@@ -29,6 +29,7 @@ const onSave = async () => {
     originalContent.value = markdown.value
     updateTitle()
   }
+  return saved
 }
 
 const onSaveAs = async () => {

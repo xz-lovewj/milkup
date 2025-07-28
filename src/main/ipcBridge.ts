@@ -96,4 +96,9 @@ export function registerIpcHandleHandlers(win: Electron.BrowserWindow) {
     fs.writeFileSync(filePath, file as Buffer);
     return filePath;
   })
+  // 同步显示消息框
+  ipcMain.handle('dialog:OpenDialog', async (_event, options: Electron.MessageBoxSyncOptions) => {
+    const response = await dialog.showMessageBox(win, options);
+    return response;
+  })
 }

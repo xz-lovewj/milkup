@@ -12,6 +12,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   openExternal: (url: string) => ipcRenderer.send('shell:openExternal', url),
   getFilePathInClipboard: () => ipcRenderer.invoke('clipboard:getFilePath'),
   wirteTempImage: (file: File, tempPath: string) => ipcRenderer.invoke('clipboard:writeTempImage', file, tempPath),
-
+  showMessageBoxSync: (options: Electron.MessageBoxSyncOptions) => ipcRenderer.invoke('dialog:OpenDialog', options),
   platform: process.platform
 })
