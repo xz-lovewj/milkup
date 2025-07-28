@@ -18,7 +18,7 @@ export default function createMenu(win: BrowserWindow) {
           click: () => {
             win.webContents.send('menu-save')
           }
-        },
+        }
       ]
     },
     {
