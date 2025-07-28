@@ -1,4 +1,4 @@
-import { app, BrowserWindow, globalShortcut, ipcRenderer } from 'electron'
+import { app, BrowserWindow, globalShortcut } from 'electron'
 import * as path from 'path'
 import * as fs from 'fs'
 import { registerIpcHandleHandlers, registerIpcOnHandlers } from './ipcBridge'
@@ -64,7 +64,7 @@ app.whenReady().then(async () => {
   win.on('close', (event) => {
     if (process.platform === 'darwin') {
       event.preventDefault()
-      ipcRenderer.send('window-control', 'close')
+      win.webContents.send('close')
     }
   })
 })

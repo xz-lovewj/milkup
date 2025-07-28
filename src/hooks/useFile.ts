@@ -61,8 +61,8 @@ function registerMenuEventsOnce() {
     })
   })
 
-  window.electronAPI?.on?.('menu-open', onOpen)
-  window.electronAPI?.on?.('menu-save', onSave)
+  window.electronAPI.on?.('menu-open', onOpen)
+  window.electronAPI.on?.('menu-save', onSave)
 }
 
 // ✅ 立即注册（只注册一次）

@@ -17,6 +17,9 @@ const toggleMaximize = () => {
 const close = async function () {
   window.electronAPI?.windowControl?.("close")
 }
+window.electronAPI.on('close', () => {
+  close()
+})
 </script>
 
 <template>
