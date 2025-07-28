@@ -48,6 +48,10 @@
         "icon": "src/assets/icons/milkup"
       }
     ],
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
     "win": {
       "target": "nsis"
     },
