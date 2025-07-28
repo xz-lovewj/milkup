@@ -61,6 +61,12 @@ app.whenReady().then(async () => {
   sendLaunchFileIfExists()
   registerIpcOnHandlers(win)
   registerIpcHandleHandlers(win)
+  win.on('close', (event) => {
+    if (process.platform === 'darwin') {
+      event.preventDefault()
+      win.webContents.send('close')
+    }
+  })
 })
 
 

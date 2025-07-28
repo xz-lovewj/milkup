@@ -1,6 +1,6 @@
 // ipcBridge.ts
 
-import { clipboard, dialog, ipcMain, shell } from 'electron'
+import { app, clipboard, dialog, ipcMain, shell } from 'electron'
 import * as fs from 'fs'
 import path from 'path'
 
@@ -25,24 +25,7 @@ export function registerIpcOnHandlers(win: Electron.BrowserWindow) {
         else win.maximize()
         break
       case 'close':
-        if (isSaved) {
-          win.close()
-        } else {
-          const options: Electron.MessageBoxSyncOptions = {
-            type: 'warning',
-            title: '确认关闭',
-            message: '当前文档有未保存的修改，是否确认关闭？',
-            buttons: ['确认', '保存并关闭', '取消'],
-            defaultId: 1,
-            cancelId: 2
-          }
-          const response = dialog.showMessageBoxSync(win, options)
-          if (response === 0) {
-            win.close()
-          } else if (response === 1) {
-            win.webContents.send('menu-save', true)
-          }
-        }
+        close(win)
         break
     }
   })
@@ -123,4 +106,26 @@ export function registerIpcHandleHandlers(win: Electron.BrowserWindow) {
     const response = await dialog.showMessageBox(win, options);
     return response;
   })
+}
+function close(win: Electron.BrowserWindow) {
+  if (isSaved) {
+    win.close()
+    app.quit()
+  } else {
+    const options: Electron.MessageBoxSyncOptions = {
+      type: 'warning',
+      title: '确认关闭',
+      message: '当前文档有未保存的修改，是否确认关闭？',
+      buttons: ['确认', '保存并关闭', '取消'],
+      defaultId: 1,
+      cancelId: 2
+    }
+    const response = dialog.showMessageBoxSync(win, options)
+    if (response === 0) {
+      win.close()
+      app.quit()
+    } else if (response === 1) {
+      win.webContents.send('menu-save', true)
+    }
+  }
 }
