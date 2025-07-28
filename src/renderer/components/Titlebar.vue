@@ -14,7 +14,9 @@ const toggleMaximize = () => {
   isFullScreen.value = !isFullScreen.value
   window.electronAPI?.windowControl?.("maximize")
 }
-const close = () => window.electronAPI?.windowControl?.("close")
+const close = async function () {
+  window.electronAPI?.windowControl?.("close")
+}
 </script>
 
 <template>
@@ -24,11 +26,7 @@ const close = () => window.electronAPI?.windowControl?.("close")
       <div class="title" @dblclick="toggleMaximize">{{ title }}</div>
       <div class="window-controls">
         <span @click="minimize" class="iconfont icon-min"></span>
-        <span
-          @click="toggleMaximize"
-          class="iconfont"
-          :class="isFullScreen ? 'icon-normal' : 'icon-max'"
-        ></span>
+        <span @click="toggleMaximize" class="iconfont" :class="isFullScreen ? 'icon-normal' : 'icon-max'"></span>
         <span @click="close" class="iconfont icon-close"></span>
       </div>
     </template>
@@ -42,7 +40,8 @@ const close = () => window.electronAPI?.windowControl?.("close")
 
 <style lang="less" scoped>
 .TitlebarBox {
-  -webkit-app-region: drag; /* ✅ 允许拖动窗口 */
+  -webkit-app-region: drag;
+  /* ✅ 允许拖动窗口 */
   height: 32px;
   background: var(--background-color-1);
   color: var(--text-color);
@@ -52,17 +51,22 @@ const close = () => window.electronAPI?.windowControl?.("close")
   padding: 0 12px;
   padding-right: 0;
   user-select: none;
+
   .window-controls {
     display: flex;
-    -webkit-app-region: no-drag; /* ✅ 控制按钮不能拖动 */
+    -webkit-app-region: no-drag;
+
+    /* ✅ 控制按钮不能拖动 */
     span {
       cursor: pointer;
       font-size: 16px;
       color: var(--text-color-1);
       padding: 8px;
+
       &:hover {
         background: var(--hover-color);
       }
+
       &.icon-close:hover {
         background: #ff5f56;
         color: white;
