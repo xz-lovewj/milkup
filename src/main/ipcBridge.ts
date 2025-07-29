@@ -5,6 +5,7 @@ import * as fs from 'fs'
 import path from 'path'
 
 let isSaved = true
+let isQuitting = false
 
 // 所有 on 类型监听
 export function registerIpcOnHandlers(win: Electron.BrowserWindow) {
@@ -25,7 +26,13 @@ export function registerIpcOnHandlers(win: Electron.BrowserWindow) {
         else win.maximize()
         break
       case 'close':
-        close(win)
+        if (process.platform === 'darwin') {
+          // 在 macOS 上，窗口关闭按钮只隐藏窗口
+          win.hide()
+        } else {
+          // 其他平台直接退出
+          close(win)
+        }
         break
     }
   })
@@ -107,8 +114,9 @@ export function registerIpcHandleHandlers(win: Electron.BrowserWindow) {
     return response;
   })
 }
-function close(win: Electron.BrowserWindow) {
+export function close(win: Electron.BrowserWindow) {
   if (isSaved) {
+    isQuitting = true
     win.close()
     app.quit()
   } else {
@@ -122,10 +130,15 @@ function close(win: Electron.BrowserWindow) {
     }
     const response = dialog.showMessageBoxSync(win, options)
     if (response === 0) {
+      isQuitting = true
       win.close()
       app.quit()
     } else if (response === 1) {
       win.webContents.send('menu-save', true)
     }
   }
+}
+
+export function getIsQuitting() {
+  return isQuitting
 }

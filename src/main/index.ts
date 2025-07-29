@@ -1,11 +1,10 @@
 import { app, BrowserWindow, globalShortcut } from 'electron'
 import * as path from 'path'
 import * as fs from 'fs'
-import { registerIpcHandleHandlers, registerIpcOnHandlers } from './ipcBridge'
+import { registerIpcHandleHandlers, registerIpcOnHandlers, close, getIsQuitting } from './ipcBridge'
 import createMenu from './menu'
 
 let win: BrowserWindow
-let isQuiting = false
 
 async function createWindow() {
   win = new BrowserWindow({
@@ -31,7 +30,7 @@ async function createWindow() {
   // 注册 Cmd+Q 快捷键来退出应用
   if (process.platform === 'darwin') {
     globalShortcut.register('Command+Q', () => {
-      app.exit(0)
+      close(win)
     })
   }
   const indexPath = path.join(__dirname, '../../dist', 'index.html')
@@ -46,16 +45,7 @@ async function createWindow() {
     win.webContents.openDevTools()
   }
   
-  // 处理窗口关闭事件
-  win.on('close', (event) => {
-    if (process.platform === 'darwin') {
-      // 在 macOS 上，点击关闭按钮时隐藏窗口而不是退出应用
-      if (!isQuiting) {
-        event.preventDefault()
-        win.hide()
-      }
-    }
-  })
+
 }
 function sendLaunchFileIfExists() {
   const fileArg = process.argv.find(arg => arg.endsWith('.md') || arg.endsWith('.markdown'))
@@ -81,15 +71,20 @@ app.whenReady().then(async () => {
   registerIpcOnHandlers(win)
   registerIpcHandleHandlers(win)
   win.on('close', (event) => {
-    if (process.platform === 'darwin') {
+    if (process.platform === 'darwin' && !getIsQuitting()) {
       event.preventDefault()
       win.webContents.send('close')
     }
   })
 })
 
-
-
+// 处理应用即将退出事件（包括右键 Dock 图标的退出）
+app.on('before-quit', (event) => {
+  if (process.platform === 'darwin' && !getIsQuitting()) {
+    event.preventDefault()
+    close(win)
+  }
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
