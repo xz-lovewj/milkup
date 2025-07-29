@@ -100,7 +100,7 @@ jobs:
           path: artifacts
 
       - name: Display structure of downloaded files
-        run: find artifacts -type f -name "*" | head -20
+        run: find artifacts -type f \( -name "*.dmg" -o -name "*.exe" \) | sort
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -113,14 +113,15 @@ jobs:
             ## MilkUp ${{ github.ref_name }}
             
             ### 下载说明
-            - **macOS Intel**: `MilkUp-${{ github.ref_name }}-mac-x64.dmg`
-            - **macOS Apple Silicon**: `MilkUp-${{ github.ref_name }}-mac-arm64.dmg`  
-            - **Windows x64**: `MilkUp-${{ github.ref_name }}-win-x64.exe`
+            - **macOS Intel**: 下载 DMG 文件（不含 arm64 后缀）
+            - **macOS Apple Silicon**: 下载带 arm64 后缀的 DMG 文件
+            - **Windows x64**: 下载 EXE 安装文件
             
             ### 更新内容
             请查看 commit 历史了解详细更新内容。
           files: |
-            artifacts/**/*.dmg
-            artifacts/**/*.exe
+            artifacts/MilkUp-mac-x64/*.dmg
+            artifacts/MilkUp-mac-arm64/*.dmg
+            artifacts/MilkUp-win-x64/*.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
