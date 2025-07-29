@@ -1,0 +1,131 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*' # 当推送以 v 开头的标签时触发，如 v1.0.0
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      matrix:
+        include:
+          # macOS 构建 (支持 arm64 和 x64)
+          - os: macos-latest
+            platform: mac
+            arch: x64
+            script: dist:mac-x64
+          - os: macos-latest
+            platform: mac
+            arch: arm64
+            script: dist:mac-arm64
+          
+          # Windows 构建 (x64)
+          - os: windows-latest
+            platform: win
+            arch: x64
+            script: dist:win-x64
+          
+          # Linux 构建 (支持 arm64 和 x64)
+          - os: ubuntu-latest
+            platform: linux
+            arch: x64
+            script: dist:linux-x64
+          - os: ubuntu-latest
+            platform: linux
+            arch: arm64
+            script: dist:linux-arm64
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build application
+        run: pnpm run ${{ matrix.script }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: MilkUp-${{ matrix.platform }}-${{ matrix.arch }}
+          path: |
+            dist/*.dmg
+            dist/*.exe
+            dist/*.AppImage
+            dist/*.blockmap
+            dist/latest*.yml
+          retention-days: 5
+
+  # 创建 GitHub Release 并上传所有构建产物
+  create-release:
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Display structure of downloaded files
+        run: find artifacts -type f -name "*" | head -20
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: MilkUp ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          body: |
+            ## MilkUp ${{ github.ref_name }}
+            
+            ### 下载说明
+            - **macOS Intel**: `MilkUp-${{ github.ref_name }}-mac-x64.dmg`
+            - **macOS Apple Silicon**: `MilkUp-${{ github.ref_name }}-mac-arm64.dmg`  
+            - **Windows x64**: `MilkUp-${{ github.ref_name }}-win-x64.exe`
+            - **Linux x64**: `MilkUp-${{ github.ref_name }}-linux-x64.AppImage`
+            - **Linux ARM64**: `MilkUp-${{ github.ref_name }}-linux-arm64.AppImage`
+            
+            ### 更新内容
+            请查看 commit 历史了解详细更新内容。
+          files: |
+            artifacts/**/*.dmg
+            artifacts/**/*.exe
+            artifacts/**/*.AppImage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
