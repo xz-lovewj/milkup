@@ -22,15 +22,7 @@
   "pnpm": {
     "overrides": {
       "@codemirror/state": "^6.2.0"
-    },
-    "onlyBuiltDependencies": [
-      "electron"
-    ],
-    "ignoredBuiltDependencies": [
-      "electron",
-      "electron-winstaller",
-      "esbuild"
-    ]
+    }
   },
   "build": {
     "appId": "com.auto-plugin.milkup",
