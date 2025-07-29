@@ -28,16 +28,6 @@ jobs:
             platform: win
             arch: x64
             script: dist:win-x64
-          
-          # Linux 构建 (支持 arm64 和 x64)
-          - os: ubuntu-latest
-            platform: linux
-            arch: x64
-            script: dist:linux-x64
-          - os: ubuntu-latest
-            platform: linux
-            arch: arm64
-            script: dist:linux-arm64
 
     steps:
       - name: Checkout code
@@ -80,7 +70,6 @@ jobs:
           pnpm run ${{ matrix.script }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEBUG: electron-builder
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -127,14 +116,11 @@ jobs:
             - **macOS Intel**: `MilkUp-${{ github.ref_name }}-mac-x64.dmg`
             - **macOS Apple Silicon**: `MilkUp-${{ github.ref_name }}-mac-arm64.dmg`  
             - **Windows x64**: `MilkUp-${{ github.ref_name }}-win-x64.exe`
-            - **Linux x64**: `MilkUp-${{ github.ref_name }}-linux-x64.AppImage`
-            - **Linux ARM64**: `MilkUp-${{ github.ref_name }}-linux-arm64.AppImage`
             
             ### 更新内容
             请查看 commit 历史了解详细更新内容。
           files: |
             artifacts/**/*.dmg
             artifacts/**/*.exe
-            artifacts/**/*.AppImage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
