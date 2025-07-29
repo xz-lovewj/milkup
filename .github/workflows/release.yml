@@ -71,16 +71,37 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload artifacts
+      - name: Upload artifacts (macOS x64)
+        if: matrix.platform == 'mac' && matrix.arch == 'x64'
         uses: actions/upload-artifact@v4
         with:
           name: MilkUp-${{ matrix.platform }}-${{ matrix.arch }}
           path: |
-            dist/*.dmg
-            dist/*.exe
-            dist/*.AppImage
-            dist/*.blockmap
-            dist/latest*.yml
+            dist/MilkUp-0.0.4.dmg
+            dist/MilkUp-0.0.4.dmg.blockmap
+            dist/latest-mac.yml
+          retention-days: 5
+
+      - name: Upload artifacts (macOS arm64)
+        if: matrix.platform == 'mac' && matrix.arch == 'arm64'
+        uses: actions/upload-artifact@v4
+        with:
+          name: MilkUp-${{ matrix.platform }}-${{ matrix.arch }}
+          path: |
+            dist/MilkUp-0.0.4-arm64.dmg
+            dist/MilkUp-0.0.4-arm64.dmg.blockmap
+            dist/latest-mac.yml
+          retention-days: 5
+
+      - name: Upload artifacts (Windows)
+        if: matrix.platform == 'win'
+        uses: actions/upload-artifact@v4
+        with:
+          name: MilkUp-${{ matrix.platform }}-${{ matrix.arch }}
+          path: |
+            dist/MilkUp Setup 0.0.4.exe
+            dist/MilkUp Setup 0.0.4.exe.blockmap
+            dist/latest.yml
           retention-days: 5
 
   # 创建 GitHub Release 并上传所有构建产物
@@ -100,7 +121,22 @@ jobs:
           path: artifacts
 
       - name: Display structure of downloaded files
-        run: find artifacts -type f \( -name "*.dmg" -o -name "*.exe" \) | sort
+        run: |
+          echo "=== Artifacts structure ==="
+          find artifacts -type f | sort
+          echo "=== DMG files ==="
+          find artifacts -name "*.dmg" | sort
+          echo "=== EXE files ==="
+          find artifacts -name "*.exe" | sort
+
+      - name: Prepare release files
+        run: |
+          mkdir -p release_files
+          # Copy unique files to avoid duplicates
+          find artifacts -name "*.dmg" -exec cp {} release_files/ \;
+          find artifacts -name "*.exe" -exec cp {} release_files/ \;
+          echo "=== Release files ==="
+          ls -la release_files/
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -119,9 +155,6 @@ jobs:
             
             ### 更新内容
             请查看 commit 历史了解详细更新内容。
-          files: |
-            artifacts/MilkUp-mac-x64/*.dmg
-            artifacts/MilkUp-mac-arm64/*.dmg
-            artifacts/MilkUp-win-x64/*.exe
+          files: release_files/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
