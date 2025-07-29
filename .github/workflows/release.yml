@@ -8,6 +8,7 @@ on:
 jobs:
   release:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     
     strategy:
       matrix:
@@ -69,12 +70,17 @@ jobs:
         run: git config --global url."https://github.com/".insteadOf "git@github.com:"
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: |
+          pnpm install --no-frozen-lockfile
+          pnpm rebuild
 
       - name: Build application
-        run: pnpm run ${{ matrix.script }}
+        run: |
+          echo "Building for ${{ matrix.platform }}-${{ matrix.arch }}"
+          pnpm run ${{ matrix.script }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEBUG: electron-builder
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
