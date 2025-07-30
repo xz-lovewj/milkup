@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*' # 当推送以 v 开头的标签时触发，如 v1.0.0
+      - 'Beta*' # 当推送以 Beta 开头的标签时触发，如 Beta-v1.0.0
 
 jobs:
   release:
