@@ -78,8 +78,8 @@ jobs:
         with:
           name: MilkUp-${{ matrix.platform }}-${{ matrix.arch }}
           path: |
-            dist/MilkUp-0.0.4.dmg
-            dist/MilkUp-0.0.4.dmg.blockmap
+            dist/MilkUp-*.dmg
+            dist/MilkUp-*.dmg.blockmap
             dist/latest-mac.yml
           retention-days: 5
 
@@ -89,8 +89,8 @@ jobs:
         with:
           name: MilkUp-${{ matrix.platform }}-${{ matrix.arch }}
           path: |
-            dist/MilkUp-0.0.4-arm64.dmg
-            dist/MilkUp-0.0.4-arm64.dmg.blockmap
+            dist/MilkUp-*-arm64.dmg
+            dist/MilkUp-*-arm64.dmg.blockmap
             dist/latest-mac.yml
           retention-days: 5
 
@@ -100,8 +100,8 @@ jobs:
         with:
           name: MilkUp-${{ matrix.platform }}-${{ matrix.arch }}
           path: |
-            dist/MilkUp Setup 0.0.4.exe
-            dist/MilkUp Setup 0.0.4.exe.blockmap
+            dist/MilkUp Setup *.exe
+            dist/MilkUp Setup *.exe.blockmap
             dist/latest.yml
           retention-days: 5
 
