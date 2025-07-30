@@ -27,13 +27,7 @@ async function createWindow() {
     if (win)
       win.webContents.openDevTools()
   })
-
-  // 注册 Cmd+Q 快捷键来退出应用
-  if (process.platform === 'darwin') {
-    globalShortcut.register('Command+Q', () => {
-      close(win)
-    })
-  }
+  
   const indexPath = path.join(__dirname, '../../dist', 'index.html')
 
   if (process.env.VITE_DEV_SERVER_URL) {

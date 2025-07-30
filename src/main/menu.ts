@@ -1,5 +1,6 @@
 import type { BrowserWindow } from 'electron'
 import { Menu } from 'electron'
+import { close } from "./ipcBridge"
 
 export default function createMenu(win: BrowserWindow) {
   const template: Electron.MenuItemConstructorOptions[] = [
@@ -63,7 +64,15 @@ export default function createMenu(win: BrowserWindow) {
       submenu: [
         { label: '隐藏 MilkUp', accelerator: 'Cmd+H', role: 'hide' },
         { label: '隐藏其他', accelerator: 'Cmd+Alt+H', role: 'hideOthers' },
-      ],
+        { type: 'separator' },
+        { 
+          label: '退出 MilkUp', 
+          accelerator: 'Cmd+Q', 
+          click: () => {
+            close(win)
+          }
+        }
+      ]
     })
   }
 
