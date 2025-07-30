@@ -63,14 +63,15 @@ onUnmounted(() => {
     position: absolute;
     top: 32px; /* 与标题栏高度一致 */
     left: 0;
-    background: #fff;
+    background: var(--background-color-1);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     z-index: 1000;
     width: 100%;
     height: 100%;
     border-radius: 4px;
     -webkit-app-region: no-drag; /* 禁止拖动 */
-    animation: fade-in 0.3s linear;
+    // animation: fade-in 0.3s linear;
+    white-space: nowrap;
   }
 }
 </style>
