@@ -1,27 +1,27 @@
 <script setup lang="ts">
-import MenuBar from './MenuBar.vue'
-import { ref, onMounted, onUnmounted } from 'vue'
-import emitter from '../events'
+import { onMounted, onUnmounted, ref } from 'vue'
 import logo from '@/assets/icons/milkup.ico'
+import emitter from '../events'
+import MenuBar from './MenuBar.vue'
 
 const isOpen = ref(false)
 emitter.on('file:Change', () => {
   isOpen.value = false
 })
 
-const handleKeydown = (event: KeyboardEvent) => {
+function handleKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape' && isOpen.value) {
-    isOpen.value = false;
+    isOpen.value = false
   }
-};
+}
 
 onMounted(() => {
-  document.addEventListener('keydown', handleKeydown);
-});
+  document.addEventListener('keydown', handleKeydown)
+})
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown);
-});
+  document.removeEventListener('keydown', handleKeydown)
+})
 </script>
 
 <template>
@@ -30,7 +30,7 @@ onUnmounted(() => {
       <img :src="logo" alt="" class="logo" :class="{ active: isOpen }" @click="isOpen = !isOpen" />
     </div>
     <Transition name="fade">
-      <div class="dropdown-content" v-show="isOpen">
+      <div v-show="isOpen" class="dropdown-content">
         <MenuBar />
       </div>
     </Transition>
