@@ -1,7 +1,7 @@
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 import { app, BrowserWindow, globalShortcut } from 'electron'
-import * as path from 'path'
-import * as fs from 'fs'
-import { registerIpcHandleHandlers, registerIpcOnHandlers, close, getIsQuitting } from './ipcBridge'
+import { close, getIsQuitting, registerIpcHandleHandlers, registerIpcOnHandlers } from './ipcBridge'
 import createMenu from './menu'
 
 let win: BrowserWindow
@@ -17,15 +17,17 @@ async function createWindow() {
     icon: path.join(__dirname, '../assets/icons/milkup.ico'),
     webPreferences: {
       sandbox: false,
-      preload: path.resolve(__dirname, "../../dist-electron/preload.js"),
+      preload: path.resolve(__dirname, '../../dist-electron/preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
       webSecurity: false, // 允许加载本地文件
-    }
+    },
   })
   globalShortcut.register('CommandOrControl+Shift+I', () => {
-    if (win) win.webContents.openDevTools()
+    if (win)
+      win.webContents.openDevTools()
   })
+  
   const indexPath = path.join(__dirname, '../../dist', 'index.html')
 
   if (process.env.VITE_DEV_SERVER_URL) {
@@ -37,8 +39,6 @@ async function createWindow() {
   if (process.env.VITE_DEV_SERVER_URL) {
     win.webContents.openDevTools()
   }
-  
-
 }
 function sendLaunchFileIfExists() {
   const fileArg = process.argv.find(arg => arg.endsWith('.md') || arg.endsWith('.markdown'))

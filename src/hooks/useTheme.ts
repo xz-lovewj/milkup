@@ -1,6 +1,5 @@
 import { ref } from 'vue'
 
-
 const defaultThemes = ['light', 'dark']
 type Theme = typeof defaultThemes[number]
 

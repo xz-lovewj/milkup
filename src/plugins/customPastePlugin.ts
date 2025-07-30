@@ -1,4 +1,4 @@
-import { Uploader } from '@milkdown/kit/plugin/upload'
+import type { Uploader } from '@milkdown/kit/plugin/upload'
 import type { Node, Schema } from '@milkdown/kit/prose/model'
 import { uploadImage } from '@/api'
 
@@ -48,7 +48,7 @@ function turnToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = () => resolve(reader.result as string)
-    reader.onerror = (error) => reject(error)
+    reader.onerror = error => reject(error)
     reader.readAsDataURL(file)
   })
 }
