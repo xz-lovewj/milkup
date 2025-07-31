@@ -1,24 +1,41 @@
 import { ref } from 'vue'
 
-const defaultThemes = ['light', 'dark']
-type Theme = typeof defaultThemes[number]
+// 定义支持的主题类型
+type ThemeType = 'light' | 'dark'
 
-const theme = ref<Theme>('light')
+// 扩展主题支持
+const supportedThemes = [
+  'normal', 'normal-dark',
+  'crepe', 'crepe-dark',
+  'frame', 'frame-dark'
+]
 
-function applyTheme(newTheme: Theme) {
-  theme.value = newTheme
+const themeType = ref<ThemeType>('light')
+const themeName = ref<string>('normal')
+
+// 根据主题名称和类型应用主题
+function applyTheme(name: string, type: ThemeType) {
+  themeName.value = name
+  themeType.value = type
+  
   const html = document.documentElement
-  if (newTheme === 'dark') {
-    html.classList.add('dark')
-    // switchMilkTheme('dark')
-  } else {
-    html.classList.remove('dark')
-    // switchMilkTheme('light')
-  }
-  localStorage.setItem('theme', newTheme)
+  
+  // 移除所有主题类
+  html.classList.remove('theme-normal', 'theme-normal-dark', 'theme-crepe', 'theme-crepe-dark', 'theme-frame', 'theme-frame-dark')
+  
+  // 添加新的主题类
+  html.classList.add(`theme-${name}`)
+  
+  // 应用Milkdown编辑器主题
+  switchMilkTheme(name)
+  
+  // 保存主题设置
+  localStorage.setItem('theme-name', name)
+  localStorage.setItem('theme-type', type)
 }
-// @ts-ignore
-function switchMilkTheme(theme: 'light' | 'dark') {
+
+// 切换Milkdown编辑器主题
+function switchMilkTheme(theme: string) {
   const id = 'milkdown-theme'
   let link = document.getElementById(id) as HTMLLinkElement | null
 
@@ -28,37 +45,36 @@ function switchMilkTheme(theme: 'light' | 'dark') {
     link.rel = 'stylesheet'
     document.head.appendChild(link)
   }
+  
   let basePath = ''
   if (import.meta.env.PROD) {
     basePath = '../renderer/public'
   }
-  if (theme === 'light') {
-    link.href = `${basePath}/milkdown-themes/nord/style.css`
-  } else {
-    link.href = `${basePath}/milkdown-themes/nord-dark/style.css`
-  }
+  
+  // 设置Milkdown编辑器主题
+  link.href = `${basePath}/milkdown-themes/${theme}/style.css`
 }
+
 export default function useTheme() {
-  // 初始化：读取本地主题
+  // 初始化：读取本地主题设置
   if (typeof window !== 'undefined') {
-    const saved = localStorage.getItem('theme') as Theme | null
-    if (saved === 'dark' || saved === 'light') {
-      applyTheme(saved)
+    const savedThemeName = localStorage.getItem('theme-name')
+    const savedThemeType = localStorage.getItem('theme-type') as ThemeType
+    
+    if (savedThemeName && (savedThemeType === 'light' || savedThemeType === 'dark')) {
+      // 应用保存的主题
+      applyTheme(savedThemeName, savedThemeType)
     } else {
-      applyTheme('light') // 默认
+      // 默认主题
+      applyTheme('normal', 'light')
     }
   }
 
-  // 手动切换主题
-  const toggleTheme = () => {
-    const next = theme.value === 'light' ? 'dark' : 'light'
-    applyTheme(next)
-  }
-
+  // 提供方法
   return {
-    defaultThemes,
-    theme,
-    setTheme: applyTheme,
-    toggleTheme,
+    supportedThemes,
+    themeType,
+    themeName,
+    setTheme: applyTheme
   }
 }
