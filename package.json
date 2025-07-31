@@ -4,7 +4,12 @@
   "description": "A Markdown editor built with Milkdown and Vue.js",
   "author": "Larry Zhu",
   "license": "MIT",
-  "keywords": ["md", "markdown", "Markdown", "milkup"],
+  "keywords": [
+    "md",
+    "markdown",
+    "Markdown",
+    "milkup"
+  ],
   "main": "dist-electron/main/index.js",
   "scripts": {
     "build:main": "esbuild src/main/index.ts --bundle --platform=node --external:electron --outfile=dist-electron/main/index.js",
@@ -55,7 +60,9 @@
     "electron-builder": "^26.0.12",
     "esbuild": "^0.25.6",
     "eslint": "^9.32.0",
+    "eslint-plugin-oxlint": "^1.9.0",
     "less": "^4.3.0",
+    "oxlint": "^1.9.0",
     "simple-git-hooks": "^2.13.0",
     "typescript": "^5.8.3",
     "vite": "^7.0.4"
@@ -98,7 +105,9 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ]
     },
@@ -106,7 +115,10 @@
       "target": [
         {
           "target": "dmg",
-          "arch": ["x64", "arm64"]
+          "arch": [
+            "x64",
+            "arm64"
+          ]
         }
       ]
     },
