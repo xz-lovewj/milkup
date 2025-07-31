@@ -11,7 +11,7 @@ const activeTab = ref<'settings' | 'about' | 'theme'>('settings')
 const MenuComponents = {
   settings: SettingBase,
   about: About,
-  theme: ThemePage
+  theme: ThemePage,
 }
 const MenuOptions = [
   { label: '打开', action: onOpen, icon: 'icon-data-select' },
@@ -19,7 +19,7 @@ const MenuOptions = [
   { label: '另存为', action: onSaveAs, icon: 'icon-baocun' },
   { label: '设置', action: () => (activeTab.value = 'settings'), icon: 'icon-config-props', value: 'settings' },
   { label: '主题', action: () => (activeTab.value = 'theme'), icon: 'icon-script', value: 'theme' },
-  { label: '关于', action: () => (activeTab.value = 'about'), icon: 'icon-github', value: 'about' }
+  { label: '关于', action: () => (activeTab.value = 'about'), icon: 'icon-github', value: 'about' },
 ]
 </script>
 

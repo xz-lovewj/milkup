@@ -5,9 +5,12 @@ type ThemeType = 'light' | 'dark'
 
 // 扩展主题支持
 const supportedThemes = [
-  'normal', 'normal-dark',
-  'crepe', 'crepe-dark',
-  'frame', 'frame-dark'
+  'normal',
+  'normal-dark',
+  'crepe',
+  'crepe-dark',
+  'frame',
+  'frame-dark',
 ]
 
 const themeType = ref<ThemeType>('light')
@@ -17,18 +20,18 @@ const themeName = ref<string>('normal')
 function applyTheme(name: string, type: ThemeType) {
   themeName.value = name
   themeType.value = type
-  
+
   const html = document.documentElement
-  
+
   // 移除所有主题类
   html.classList.remove('theme-normal', 'theme-normal-dark', 'theme-crepe', 'theme-crepe-dark', 'theme-frame', 'theme-frame-dark')
-  
+
   // 添加新的主题类
   html.classList.add(`theme-${name}`)
-  
+
   // 应用Milkdown编辑器主题
   switchMilkTheme(name)
-  
+
   // 保存主题设置
   localStorage.setItem('theme-name', name)
   localStorage.setItem('theme-type', type)
@@ -45,12 +48,12 @@ function switchMilkTheme(theme: string) {
     link.rel = 'stylesheet'
     document.head.appendChild(link)
   }
-  
+
   let basePath = ''
   if (import.meta.env.PROD) {
     basePath = '../renderer/public'
   }
-  
+
   // 设置Milkdown编辑器主题
   link.href = `${basePath}/milkdown-themes/${theme}/style.css`
 }
@@ -60,7 +63,7 @@ export default function useTheme() {
   if (typeof window !== 'undefined') {
     const savedThemeName = localStorage.getItem('theme-name')
     const savedThemeType = localStorage.getItem('theme-type') as ThemeType
-    
+
     if (savedThemeName && (savedThemeType === 'light' || savedThemeType === 'dark')) {
       // 应用保存的主题
       applyTheme(savedThemeName, savedThemeType)
@@ -75,6 +78,6 @@ export default function useTheme() {
     supportedThemes,
     themeType,
     themeName,
-    setTheme: applyTheme
+    setTheme: applyTheme,
   }
 }

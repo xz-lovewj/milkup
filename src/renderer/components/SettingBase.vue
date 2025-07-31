@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import SpellCheckSetter from './SpellCheckSetter.vue';
-import ImageConfig from './ImageConfig.vue';
+import ImageConfig from './ImageConfig.vue'
+import SpellCheckSetter from './SpellCheckSetter.vue'
 </script>
 
 <template>
