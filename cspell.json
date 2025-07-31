@@ -5,6 +5,7 @@
     "autolog",
     "automd",
     "commonmark",
+    "oxlint",
     "milkdown",
     "Milkdown",
     "milkup",

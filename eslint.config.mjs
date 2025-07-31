@@ -1,6 +1,8 @@
 import antfu from '@antfu/eslint-config'
+import oxlint from 'eslint-plugin-oxlint'
 
 export default antfu({
+  ...oxlint.configs['flat/recommended'],
   vue: {
     overrides: {
       'vue/html-self-closing': 'off',
