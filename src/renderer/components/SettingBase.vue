@@ -1,15 +1,10 @@
 <script setup lang="ts">
 import ImageConfig from './ImageConfig.vue'
 import SpellCheckSetter from './SpellCheckSetter.vue'
-import ThemeSetter from './ThemeSetter.vue'
 </script>
 
 <template>
   <div class="SettingBaseBox">
-    <div class="settingItem">
-      <span class="title">主题</span>
-      <ThemeSetter />
-    </div>
     <div class="settingItem">
       <span class="title">拼写检查</span>
       <SpellCheckSetter />

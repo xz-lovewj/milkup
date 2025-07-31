@@ -27,7 +27,7 @@ async function createWindow() {
     if (win)
       win.webContents.openDevTools()
   })
-  
+
   const indexPath = path.join(__dirname, '../../dist', 'index.html')
 
   if (process.env.VITE_DEV_SERVER_URL) {
