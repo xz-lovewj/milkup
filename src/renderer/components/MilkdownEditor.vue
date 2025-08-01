@@ -4,12 +4,12 @@ import { Crepe } from '@milkdown/crepe'
 import { upload, uploadConfig } from '@milkdown/kit/plugin/upload'
 import { outline } from '@milkdown/kit/utils'
 import { automd } from '@milkdown/plugin-automd'
-import { commonmark } from '@milkdown/preset-commonmark'
 import { onMounted } from 'vue'
 import { uploader } from '@/plugins/customPastePlugin'
 import useContent from '@/hooks/useContent'
 import emitter from '../events'
-import rehypeRaw from 'rehype-raw';
+import { htmlSchema, htmlAttr } from '@/plugins/rawHtmlPlugin'
+import { commonmark } from '@milkdown/preset-commonmark'
 
 const props = defineProps<{
   modelValue: string
@@ -47,9 +47,12 @@ onMounted(async () => {
   })
   const editor = crepe.editor
   editor.ctx.inject(uploadConfig.key)
-  editor.use(commonmark)
+  editor.ctx.inject(htmlAttr.key)
+  editor
     .use(automd)
     .use(upload)
+    .use(commonmark)
+    .use(htmlSchema)
 
   await crepe.create()
   editor.ctx.update(uploadConfig.key, prev => ({ ...prev, uploader }))
