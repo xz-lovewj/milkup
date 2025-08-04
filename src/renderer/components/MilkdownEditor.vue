@@ -8,7 +8,7 @@ import { onMounted } from 'vue'
 import { uploader } from '@/plugins/customPastePlugin'
 import useContent from '@/hooks/useContent'
 import emitter from '../events'
-import { htmlSchema, htmlAttr } from '@/plugins/rawHtmlPlugin'
+import { htmlPlugin } from '@/plugins/rawHtmlPlugin'
 import { commonmark } from '@milkdown/preset-commonmark'
 
 const props = defineProps<{
@@ -47,12 +47,11 @@ onMounted(async () => {
   })
   const editor = crepe.editor
   editor.ctx.inject(uploadConfig.key)
-  editor.ctx.inject(htmlAttr.key)
   editor
     .use(automd)
     .use(upload)
-    .use(commonmark)
-    .use(htmlSchema)
+    .use(htmlPlugin)
+    // .use(commonmark)
 
   await crepe.create()
   editor.ctx.update(uploadConfig.key, prev => ({ ...prev, uploader }))

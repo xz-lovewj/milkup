@@ -50,6 +50,7 @@
     "@milkdown/vue": "^7.15.2",
     "@vue/runtime-dom": "^3.5.17",
     "autolog.js": "^3.0.1",
+    "he": "^1.2.0",
     "mdast": "^3.0.0",
     "mitt": "^3.0.1",
     "rehype-raw": "^7.0.0",
@@ -62,6 +63,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^5.0.0",
+    "@types/he": "^1.2.3",
     "@types/mdast": "^4.0.4",
     "@types/node": "^24.0.13",
     "@types/unist": "^3.0.3",
