@@ -1,12 +1,94 @@
-import { Meta, MilkdownPlugin } from "@milkdown/kit/ctx"
+import { Ctx, Meta, MilkdownPlugin } from "@milkdown/kit/ctx"
 import { $nodeAttr, $nodeSchema } from "@milkdown/utils"
 import { $remark, $prose } from "@milkdown/utils"
 import { RootContent } from "mdast"
 import { visit } from 'unist-util-visit'
-import { Plugin } from "@milkdown/prose/state"
+import { Plugin, PluginKey, Selection, TextSelection } from "@milkdown/prose/state"
 import { EditorView, NodeViewConstructor } from "@milkdown/prose/view"
-import { Node as ProseNode } from "@milkdown/prose/model"
+import { Node as ProseNode, Slice } from "@milkdown/prose/model"
+import { editorViewCtx } from "@milkdown/kit/core"
+import { unified } from "unified"
+import remarkParse from 'remark-parse'
+import remarkStringify from 'remark-stringify'
 
+export function punctuationRegexp(holePlaceholder: string) {
+  return new RegExp(`\\\\(?=[^\\w\\s${holePlaceholder}\\\\]|_)`, 'g')
+}
+
+/** remark 插件：移除所有转义符，只保留被转义字符本身 */
+function remarkRemoveEscapes() {
+  return (tree: any) => {
+    visit(tree, 'text', (node: any) => {
+      if (typeof node.value === 'string') {
+        node.value = node.value.replace(/\\([^\w\s])/g, '$1')
+      }
+    })
+  }
+}
+/** inlineSyncPlugin：只更新当前文本块，保持光标 */
+export const inlineSyncPlugin = $prose((ctx: Ctx) => {
+  const key = new PluginKey('inlineSyncPlugin')
+  let rafId: number | null = null
+
+  return new Plugin({
+    key,
+    state: {
+      init: () => null,
+      apply(tr, _old, _oldState, newState) {
+        const view = ctx.get(editorViewCtx)
+        if (!view.hasFocus?.() || !view.editable) return null
+        if (!tr.docChanged) return null
+        if (tr.getMeta(key)) return null
+
+        // 节流
+        if (rafId) {
+          cancelAnimationFrame(rafId)
+        }
+        rafId = requestAnimationFrame(() => {
+          rafId = null
+
+          const { state, dispatch } = view
+          const { selection, doc, schema } = state
+          const { $from } = selection
+
+          // 当前光标所在的块级范围
+          const range = $from.blockRange()
+          if (!range) return
+          const start = range.start
+          const end = range.end
+
+          // 原始块文本
+          const blockText = doc.textBetween(start, end, '', '')
+
+          // 用 remark 解析并去转义
+          const processor = unified()
+            .use(remarkParse)
+            // .use(remarkRemoveEscapes)
+            .use(remarkStringify, true)
+
+          const ast = processor.parse(blockText)
+          let newText = processor.stringify(ast)
+          if (newText !== blockText) {
+            // 用 replaceWith 直接替换
+            let tr2 = state.tr.replaceWith(
+              start,
+              end,
+              schema.text(newText)
+            )
+            // 计算新光标位置，确保不超过文档长度
+            const maxPos = tr2.doc.content.size
+            const newPos = Math.min(start + newText.length, maxPos)
+            tr2 = tr2.setSelection(TextSelection.create(tr2.doc, newPos))
+            tr2 = tr2.setMeta(key, true)
+            dispatch(tr2)
+          }
+        })
+
+        return null
+      },
+    },
+  })
+})
 export function createHtmlNodeView(): NodeViewConstructor {
   return (node: ProseNode, view: EditorView, getPos) => {
     let editing = false
@@ -111,7 +193,25 @@ export const proseHtml = $prose(() => {
     props: {
       nodeViews: {
         html: createHtmlNodeView(),
-      }
+      },
+      handleKeyDown(view, event) {
+        const { selection } = view.state
+        const node = selection.$anchor.node()
+        if (node.type.name === 'html') {
+          if (event.key === 'Enter') {
+            // 在 html 节点内按下 Enter 键时，阻止默认行为，跳出当前段落，并在后面插入一个新的段落
+            event.preventDefault()
+            const { tr } = view.state
+            const pos = selection.$anchor.end()
+            console.log('selection::: ', selection);
+            tr.setSelection(Selection.near(tr.doc.resolve(pos + 1)))
+            view.dispatch(tr)
+            return true
+          }
+        }
+
+        return false
+      },
     },
 
   })
@@ -123,6 +223,7 @@ export const remarkHtmlSplitter = $remark('remarkHtmlSplitter', () => () => (tre
     if (!('children' in parent)) return
 
     const value: string = node.value
+    console.log('node.value::: ', node.value);
     const htmlMatch = value.match(/^<([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>[\s\S]*<\/\1>/)
     if (!htmlMatch) return
 
