@@ -4,69 +4,144 @@ import { $remark, $prose } from "@milkdown/utils"
 import { RootContent } from "mdast"
 import { visit } from 'unist-util-visit'
 import { Plugin } from "@milkdown/prose/state"
-import { Decoration, DecorationSet } from "@milkdown/prose/view"
-import he from "he"
+import { EditorView, NodeViewConstructor } from "@milkdown/prose/view"
+import { Node as ProseNode } from "@milkdown/prose/model"
 
-export const proseHtmlUnescape = $prose(() => {
+export function createHtmlNodeView(): NodeViewConstructor {
+  return (node: ProseNode, view: EditorView, getPos) => {
+    let editing = false
+    const pos = getPos() as number;
+    const dom = document.createElement('div')
+    dom.classList.add('html-block')
+    dom.setAttribute('data-type', 'html')
+    dom.setAttribute('contenteditable', 'true')
+
+    const contentDOM = document.createElement('div')
+    contentDOM.classList.add('html-source')
+    contentDOM.setAttribute('contenteditable', 'true')
+
+    const rendered = document.createElement('div')
+    rendered.classList.add('html-rendered')
+    rendered.setAttribute('data-rendered', 'true')
+    rendered.innerHTML = node.attrs.value
+    // 切换到编辑状态
+    const enterEdit = () => {
+      if (editing) return
+      editing = true
+
+      // 更新编辑内容
+      contentDOM.innerText = rendered.innerHTML
+      dom.innerHTML = ''
+      dom.appendChild(contentDOM)
+
+      setTimeout(() => {
+        view.focus()
+        // ✅ 将光标移至最后
+        const selection = window.getSelection()
+        const range = document.createRange()
+
+        const lastTextNode = contentDOM.firstChild
+        if (lastTextNode) {
+          const len = lastTextNode.textContent?.length ?? 0
+          range.setStart(lastTextNode, len)
+          range.setEnd(lastTextNode, len)
+          selection?.removeAllRanges()
+          selection?.addRange(range)
+        }
+      }, 0)
+    }
+    // 切换到渲染状态
+    const exitEdit = () => {
+      if (!editing) return;
+      editing = false;
+      // 构造并派发 transaction，更新节点 attrs.value
+      const newValue = contentDOM.innerText;
+      const tr = view.state.tr;
+      tr.setNodeMarkup(
+        pos,               // 节点位置
+        undefined,         // 保持类型不变
+        { value: newValue } // 更新 attrs
+      );
+      view.dispatch(tr);
+      // 更新预览
+      rendered.innerHTML = newValue;
+      dom.innerHTML = '';
+      dom.appendChild(rendered);
+    };
+
+    // 点击进入编辑
+    document.addEventListener('selectionchange', handleSelectionChange)
+    function handleSelectionChange() {
+      const selection = document.getSelection()
+      if (!selection || !selection.anchorNode) return
+
+      const anchorNode = selection.anchorNode
+      const inThisNode = dom.contains(anchorNode)
+
+      if (inThisNode && !editing) {
+        requestAnimationFrame(() => enterEdit())
+      } else if (!inThisNode && editing) {
+        requestAnimationFrame(() => exitEdit())
+      }
+    }
+    // 初始状态是渲染状态
+    dom.appendChild(rendered)
+
+    return {
+      dom,
+      contentDOM,
+      update(updatedNode) {
+        if (updatedNode.type !== node.type) return false
+        if (!editing) {
+          rendered.innerHTML = updatedNode.attrs.value
+        }
+        return true
+      },
+      ignoreMutation: () => editing,
+      stopEvent: () => editing,
+      destroy() {
+        document.removeEventListener('selectionchange', handleSelectionChange)
+      }
+    }
+  }
+}
+
+export const proseHtml = $prose(() => {
   return new Plugin({
     props: {
-      decorations(state) {
-        const decorations: Decoration[] = []
-        state.doc.descendants((node, pos) => {
-          const htmlMatch = node.text?.match(/<([a-zA-Z][a-zA-Z0-9]*)\b([^>]*)>([\s\S]*)<\/\1>/)
-          if (!htmlMatch || !node.text) return
-          // 创建一个 DOM 节点并渲染 HTML
-          const wrapper = document.createElement(htmlMatch[1] || 'span')
-          const attrs = htmlMatch[2]?.split(' ').reduce((acc: any, attr: string) => {
-            const [key, value] = attr.split('=')
-            if (value) {
-              acc[key] = value.replace(/['"]/g, '')
-            }
-            return acc
-          }, {})
-          wrapper.setAttribute('data-type', 'html')
-          wrapper.setAttribute('data-value', htmlMatch[3])
-          if (attrs) {
-            Object.keys(attrs).forEach(key => {
-              wrapper.setAttribute(key, attrs[key])
-            })
-          }
-          wrapper.innerHTML = htmlMatch[3]
-          const deco = Decoration.widget(pos - 1, () => wrapper, {
-            side: -1,
-            key: `html-${pos}`,
-          })
-          decorations.push(deco)
-        })
-        return DecorationSet.create(state.doc, decorations)
-      },
+      nodeViews: {
+        html: createHtmlNodeView(),
+      }
     },
+
   })
 })
 
 export const remarkHtmlSplitter = $remark('remarkHtmlSplitter', () => () => (tree) => {
-  visit(tree, 'html', (node, index, parent) => {
+  visit(tree, (node, index, parent) => {
+    if (!parent || (node.type !== 'html')) return
+    if (!('children' in parent)) return
+
     const value: string = node.value
-    const children = parent!.children
-    // 例子：把 html 部分抽出来
     const htmlMatch = value.match(/^<([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>[\s\S]*<\/\1>/)
     if (!htmlMatch) return
+
     const htmlPart = htmlMatch[0]
     const rest = value.slice(htmlPart.length).trim()
-    const newNodes: RootContent[] = []
-    // html node
-    newNodes.push({
-      type: 'text',
-      value: he.decode(htmlPart),
-    })
-    // 如果有剩下的文本
-    if (rest) {
-      newNodes.push({ type: 'text', value: rest })
+    const newHtmlNode: RootContent = {
+      type: 'html',
+      value: htmlPart,
     }
-    // 替换当前节点
+    const newTextNode: RootContent | null = rest
+      ? { type: 'text', value: rest }
+      : null
+    const children = parent.children
+    const newNodes: RootContent[] = [newHtmlNode]
+    if (newTextNode) newNodes.push(newTextNode)
     children.splice(index!, 1, ...newNodes)
   })
 })
+
 
 export const htmlAttr = $nodeAttr('html')
 export function withMeta<T extends MilkdownPlugin>(
@@ -90,9 +165,10 @@ withMeta(htmlAttr, {
 export const htmlSchema = $nodeSchema('html', (ctx) => {
   ctx.inject(htmlAttr.key)
   return {
-    atom: true,
-    group: 'inline',
     inline: true,
+    code: true,
+    group: 'inline',
+    content: 'text*',
     attrs: {
       value: {
         default: '',
@@ -138,4 +214,4 @@ export const htmlSchema = $nodeSchema('html', (ctx) => {
     },
   }
 })
-export const htmlPlugin: MilkdownPlugin[] = [htmlSchema, remarkHtmlSplitter, proseHtmlUnescape].flat()
+export const htmlPlugin: MilkdownPlugin[] = [htmlSchema, remarkHtmlSplitter, proseHtml].flat()

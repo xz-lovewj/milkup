@@ -64,3 +64,21 @@ each(@headers, {
     opacity: 0;
   }
 }
+.html-block {
+  padding: 2px 0;
+}
+.html-source {
+  color: var(--text-color-3);
+  background: var(--background-color-2);
+  padding: 2px 4px;
+  border-radius: 4px;
+  &::selection {
+    background: var(--selected-background-color-1) !important;
+    color: var(--selected-color-1) !important;
+  }
+}
+.html-rendered {
+  &:hover {
+    background: var(--hover-background-color);
+  }
+}
