@@ -11,8 +11,8 @@ let isQuitting = false
 export function registerIpcOnHandlers(win: Electron.BrowserWindow) {
   ipcMain.on('set-title', (_event, filePath: string | null) => {
     const title = filePath
-      ? `MilkUp - ${path.basename(filePath)}`
-      : 'MilkUp - Untitled'
+      ? `milkup - ${path.basename(filePath)}`
+      : 'milkup - Untitled'
     win.setTitle(title)
   })
   ipcMain.on('window-control', async (_event, action) => {

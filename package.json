@@ -96,7 +96,7 @@
   },
   "build": {
     "appId": "com.auto-plugin.milkup",
-    "productName": "MilkUp",
+    "productName": "milkup",
     "files": [
       "dist/**/*",
       "dist-electron/**/*"

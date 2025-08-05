@@ -12,7 +12,7 @@ function openByDefaultBrowser(url: string) {
     <div class="auto-plugin">
       <span class="iconfont icon-github link" @click="openByDefaultBrowser(`https://github.com/Auto-Plugin/milkup`)">Auto-Plugin</span>
     </div>
-    <h1><img :src="logo" alt="" /> MilkUp</h1>
+    <h1><img :src="logo" alt="" /> milkup</h1>
     <p>一个基于 Milkdown 的 Markdown 编辑器</p>
     <p>version: v{{ version }}</p>
     <p>MIT Copyright © [2025] Larry Zhu</p>

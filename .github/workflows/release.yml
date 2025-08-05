@@ -74,10 +74,10 @@ jobs:
         if: matrix.platform == 'mac' && matrix.arch == 'x64'
         uses: actions/upload-artifact@v4
         with:
-          name: MilkUp-${{ matrix.platform }}-${{ matrix.arch }}
+          name: milkup-${{ matrix.platform }}-${{ matrix.arch }}
           path: |
-            dist/MilkUp-*.dmg
-            dist/MilkUp-*.dmg.blockmap
+            dist/milkup-*.dmg
+            dist/milkup-*.dmg.blockmap
             dist/latest-mac.yml
           retention-days: 5
 
@@ -85,10 +85,10 @@ jobs:
         if: matrix.platform == 'mac' && matrix.arch == 'arm64'
         uses: actions/upload-artifact@v4
         with:
-          name: MilkUp-${{ matrix.platform }}-${{ matrix.arch }}
+          name: milkup-${{ matrix.platform }}-${{ matrix.arch }}
           path: |
-            dist/MilkUp-*-arm64.dmg
-            dist/MilkUp-*-arm64.dmg.blockmap
+            dist/milkup-*-arm64.dmg
+            dist/milkup-*-arm64.dmg.blockmap
             dist/latest-mac.yml
           retention-days: 5
 
@@ -96,10 +96,10 @@ jobs:
         if: matrix.platform == 'win'
         uses: actions/upload-artifact@v4
         with:
-          name: MilkUp-${{ matrix.platform }}-${{ matrix.arch }}
+          name: milkup-${{ matrix.platform }}-${{ matrix.arch }}
           path: |
-            dist/MilkUp Setup *.exe
-            dist/MilkUp Setup *.exe.blockmap
+            dist/milkup Setup *.exe
+            dist/milkup Setup *.exe.blockmap
             dist/latest.yml
           retention-days: 5
 
@@ -141,11 +141,11 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
-          name: MilkUp ${{ github.ref_name }}
+          name: milkup ${{ github.ref_name }}
           draft: false
           prerelease: false
           body: |
-            ## MilkUp ${{ github.ref_name }}
+            ## milkup ${{ github.ref_name }}
 
             ### 下载说明
             - **macOS Intel**: 下载 DMG 文件（不含 arm64 后缀）

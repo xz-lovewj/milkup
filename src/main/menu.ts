@@ -60,13 +60,13 @@ export default function createMenu(win: BrowserWindow) {
   // 在 macOS 上添加应用菜单
   if (process.platform === 'darwin') {
     template.unshift({
-      label: 'MilkUp',
+      label: 'milkup',
       submenu: [
-        { label: '隐藏 MilkUp', accelerator: 'Cmd+H', role: 'hide' },
+        { label: '隐藏 milkup', accelerator: 'Cmd+H', role: 'hide' },
         { label: '隐藏其他', accelerator: 'Cmd+Alt+H', role: 'hideOthers' },
         { type: 'separator' },
         {
-          label: '退出 MilkUp',
+          label: '退出 milkup',
           accelerator: 'Cmd+Q',
           click: () => {
             close(win)

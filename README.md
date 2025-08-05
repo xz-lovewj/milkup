@@ -1,13 +1,13 @@
 <div align="center">
-  <img src="./src/renderer/public/logo.svg" alt="MilkUp Logo" width="150"> 
-  <h1>MilkUp</h1>
+  <img src="./src/renderer/public/logo.svg" alt="milkup Logo" width="150"> 
+  <h1>milkup</h1>
 </div>
 
-MilkUp 是一个桌面端 Markdown 编辑器, 目前支持 windows、MacOS、Linux(需自行打包)。
+milkup 是一个桌面端 Markdown 编辑器, 目前支持 windows、MacOS、Linux(需自行打包)。
 
 ## 项目简介
 
-MilkUp 提供了一个简单易用的界面，用于编辑 Markdown 文档。它的设计目标是为用户提供高效的 Markdown 操作体验，同时支持多种渲染和编辑功能。
+milkup 提供了一个简单易用的界面，用于编辑 Markdown 文档。它的设计目标是为用户提供高效的 Markdown 操作体验，同时支持多种渲染和编辑功能。
 
 ## 功能特点
 
@@ -29,9 +29,11 @@ MilkUp 提供了一个简单易用的界面，用于编辑 Markdown 文档。它
 * [x] 大纲功能。
 * [ ] 更多个性化设置。
   * [x] 拼写检查
+* [ ] HTML 支持。
 * [ ] 支持 Markdown 文件的导出为 PDF 或 HTML。
 * [ ] 自定义 CSS。
 * [ ] 支持插件扩展，允许用户自定义功能。
+* [ ] 使用 Tauri 重构。
 * [ ] 干翻 typora。
 
 ## 安装与运行
@@ -68,3 +70,9 @@ pnpm run dist
 ## 许可证
 
 本项目使用 [MIT License](LICENSE)。
+
+## 联系我们
+
+如果您有任何问题或建议，请通过以下方式联系我们：
+
+![alt text](./public/9f9e783bb2eb1013635d8ddbd15d008d.jpg)
