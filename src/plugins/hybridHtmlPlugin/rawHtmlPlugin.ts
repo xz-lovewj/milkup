@@ -36,7 +36,6 @@ export const escapeAngleBracketRule = $inputRule(
 export function createHtmlNodeView(): NodeViewConstructor {
   return (node: ProseNode, view: EditorView, getPos) => {
     let editing = false
-    const pos = getPos() as number;
     const dom = document.createElement('div')
     dom.classList.add('html-block')
     dom.setAttribute('data-type', 'html')
@@ -84,7 +83,7 @@ export function createHtmlNodeView(): NodeViewConstructor {
       const newValue = contentDOM.innerText;
       const tr = view.state.tr;
       tr.setNodeMarkup(
-        pos,               // 节点位置
+        getPos() as number,               // 节点位置
         undefined,         // 保持类型不变
         { value: newValue } // 更新 attrs
       );
@@ -160,7 +159,44 @@ export const proseHtml = $prose(() => {
 
   })
 })
+// remark AST 会把行内元素标签单独分开即 `<span>text</span>` 会被拆分成三个节点,这里将相邻的 HTML 开始标签、文本节点和结束标签合并为一个 HTML 节点
+export const remarkHtmlMerger = $remark('remarkHtmlMerger', () => () => (tree) => {
+  visit(tree, (_node, _index, parent) => {
+    if (!parent || !Array.isArray(parent.children)) return
 
+    const children = parent.children
+
+    for (let i = 0; i < children.length - 2; i++) {
+      const open = children[i]
+      const text = children[i + 1]
+      const close = children[i + 2]
+
+      if (
+        open.type === 'html' &&
+        text.type === 'text' &&
+        close.type === 'html'
+      ) {
+        const openTagMatch = open.value.match(/^<([a-zA-Z][\w\-]*)[^>]*>$/)
+        const closeTagMatch = close.value.match(/^<\/([a-zA-Z][\w\-]*)>$/)
+
+        if (
+          openTagMatch &&
+          closeTagMatch &&
+          openTagMatch[1] === closeTagMatch[1]
+        ) {
+          // 合并为一个新的 html 节点
+          const combinedNode: RootContent = {
+            type: 'html',
+            value: `${open.value}${text.value}${close.value}`,
+          }
+
+          children.splice(i, 3, combinedNode)
+        }
+      }
+    }
+  })
+})
+// 将紧邻的 HTML 节点的文本节点拆分开来
 export const remarkHtmlSplitter = $remark('remarkHtmlSplitter', () => () => (tree) => {
   visit(tree, (node, index, parent) => {
     if (!parent || (node.type !== 'html')) return
@@ -258,4 +294,4 @@ export const htmlSchema = $nodeSchema('html', (ctx) => {
     },
   }
 })
-export const htmlPlugin: MilkdownPlugin[] = [htmlSchema, remarkHtmlSplitter, proseHtml, escapeAngleBracketRule].flat()
+export const htmlPlugin: MilkdownPlugin[] = [htmlSchema, remarkHtmlMerger, remarkHtmlSplitter, proseHtml, escapeAngleBracketRule].flat()

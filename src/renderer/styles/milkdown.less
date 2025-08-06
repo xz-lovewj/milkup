@@ -79,23 +79,54 @@ each(@headers, {
 
 .html-block {
   padding: 2px 0;
+  display: inline-block;
+
+  div[align="center"] {
+    margin: 0 auto;
+  }
+
+  &:has(*[align="center"]),&:has(center),&:has(.html-source) {
+    display: block;
+  }
 
   div:empty {
     min-height: 24px;
 
     &::after {
       content: '<div></div>';
-      color: var(--text-color-4)!important;
+      color: var(--text-color-4) !important;
       font-size: 12px;
       padding: 0 4px;
     }
   }
+
   p:empty {
     min-height: 24px;
 
     &::after {
       content: '<p></p>';
-      color: var(--text-color-4)!important;
+      color: var(--text-color-4) !important;
+      font-size: 12px;
+      padding: 0 4px;
+    }
+  }
+
+  center:empty {
+    min-height: 24px;
+
+    &::after {
+      content: '<center></center>';
+      color: var(--text-color-4) !important;
+      font-size: 12px;
+      padding: 0 4px;
+    }
+  }
+  span:empty {
+    min-height: 24px;
+
+    &::after {
+      content: '<span></span>';
+      color: var(--text-color-4) !important;
       font-size: 12px;
       padding: 0 4px;
     }
