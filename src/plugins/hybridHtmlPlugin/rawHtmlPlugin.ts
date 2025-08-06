@@ -12,9 +12,8 @@ import { InputRule } from "@milkdown/prose/inputrules"
 // 不转义 HTML 标签,即使输入 <div> 也能正常显示
 export const escapeAngleBracketRule = $inputRule(
   () => new InputRule(
-    /<([^>]+)>.*<([^>]+)>$/,
+    /<([^>]+)>(.*)<\/([^>]+)>$/,
     (state, match, start, end) => {
-      console.log('match::: ', match);
       const [text] = match
       if (!text) return null
 
