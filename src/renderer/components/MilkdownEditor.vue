@@ -8,8 +8,7 @@ import { onMounted } from 'vue'
 import { uploader } from '@/plugins/customPastePlugin'
 import useContent from '@/hooks/useContent'
 import emitter from '../events'
-import { htmlPlugin } from '@/plugins/rawHtmlPlugin'
-import { commonmark } from '@milkdown/preset-commonmark'
+import { htmlPlugin } from '@/plugins/hybridHtmlPlugin/rawHtmlPlugin'
 
 const props = defineProps<{
   modelValue: string
