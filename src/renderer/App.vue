@@ -76,12 +76,7 @@ function reBuildMilkdown() {
     </div>
   </div>
   <StatusBar :content="markdown" />
-  <SaveConfirmDialog
-    :visible="isDialogVisible"
-    @save="handleSave"
-    @discard="handleDiscard"
-    @cancel="handleCancel"
-  />
+  <SaveConfirmDialog :visible="isDialogVisible" @save="handleSave" @discard="handleDiscard" @cancel="handleCancel" />
 </template>
 
 <style scoped lang="less">

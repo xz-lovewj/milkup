@@ -12,7 +12,7 @@ interface Window {
     onOpenFileAtLaunch: (cb: (payload: { filePath: string, content: string }) => void) => void
     openExternal: (url: string) => Promise<void>
     getFilePathInClipboard: () => Promise<string | null>
-    writeTempImage: (file: ArrayBufferLike, tempPath: string) => Promise<string>
+    writeTempImage: (file: Uint8Array<ArrayBuffer>, tempPath: string) => Promise<string>
     // 主题编辑器相关
     openThemeEditor: () => void
     themeEditorWindowControl: (action: 'minimize' | 'maximize' | 'close') => void

@@ -185,13 +185,13 @@ export function registerIpcHandleHandlers(win: Electron.BrowserWindow) {
     }
   })
   // 将临时图片写入剪贴板
-  ipcMain.handle('clipboard:writeTempImage', async (_event, file: ArrayBufferLike, tempPath: string) => {
+  ipcMain.handle('clipboard:writeTempImage', async (_event, file: Uint8Array<ArrayBuffer>, tempPath: string) => {
     const tempDir = path.join(__dirname, tempPath || '/temp')
     if (!fs.existsSync(tempDir)) {
       fs.mkdirSync(tempDir)
     }
     const filePath = path.join(tempDir, `temp-image-${Date.now()}.png`)
-    fs.writeFileSync(filePath, file as Buffer)
+    fs.writeFileSync(filePath, file)
     return filePath
   })
   // 同步显示消息框

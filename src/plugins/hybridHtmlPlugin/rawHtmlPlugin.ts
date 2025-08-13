@@ -1,4 +1,4 @@
-import { Meta, MilkdownPlugin } from "@milkdown/kit/ctx"
+import { MilkdownPlugin } from "@milkdown/kit/ctx"
 import { $nodeAttr, $nodeSchema } from "@milkdown/utils"
 import { $remark, $prose } from "@milkdown/utils"
 import { RootContent } from "mdast"
@@ -8,6 +8,7 @@ import { EditorView, NodeViewConstructor } from "@milkdown/prose/view"
 import { Node as ProseNode } from "@milkdown/prose/model"
 import { $inputRule } from "@milkdown/utils"
 import { InputRule } from "@milkdown/prose/inputrules"
+import { withMeta } from "../__internal__"
 
 // 不转义 HTML 标签,即使输入 <div> 也能正常显示
 export const escapeAngleBracketRule = $inputRule(
@@ -224,19 +225,6 @@ export const remarkHtmlSplitter = $remark('remarkHtmlSplitter', () => () => (tre
 
 
 export const htmlAttr = $nodeAttr('html')
-export function withMeta<T extends MilkdownPlugin>(
-  plugin: T,
-  meta: Partial<Meta> & Pick<Meta, 'displayName'>
-): T {
-  Object.assign(plugin, {
-    meta: {
-      package: '@milkdown/preset-commonmark',
-      ...meta,
-    },
-  })
-
-  return plugin
-}
 
 withMeta(htmlAttr, {
   displayName: 'Attr<html>',
