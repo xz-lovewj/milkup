@@ -243,31 +243,6 @@ export const htmlSchema = $nodeSchema('html', (ctx) => {
         validate: 'string',
       },
     },
-    toDOM: (node) => {
-      let value = node.attrs.value
-      const tagMatch = value.match(/<(\w+)/)
-      const tagName = tagMatch ? tagMatch[1] : 'span'
-      const match = value.match(new RegExp(`<${tagName}\\s+([^>]+)>(.*?)<\/${tagName}>`))
-      if (!match) return [tagName, { 'data-type': 'html', 'data-value': value }, value.replaceAll(/<[^>]+>/g, '')]
-      const attrs = match[1]?.replace(/=/g, ':').replaceAll(/ /g, '').split(' ').reduce((acc: any, attr: any) => {
-        const [key, ...valueParts] = attr.split(':')
-        const value = valueParts.join(':').replaceAll(/"/g, '')
-        acc[key] = value.replaceAll(/"|'/g, '')
-        return acc
-      }, {})
-      const attr = {
-        ...ctx.get(htmlAttr.key)(node),
-        value: value,
-        'data-type': 'html',
-        ...attrs,
-      }
-      const el = document.createElement(tagName)
-      Object.keys(attr).forEach((key) => {
-        el.setAttribute(key, attr[key])
-      })
-      el.innerHTML = value.replace(/<[^>]+>/g, '')
-      return el
-    },
     parseMarkdown: {
       match: ({ type }) => Boolean(type === 'html'),
       runner: (state, node, type) => {

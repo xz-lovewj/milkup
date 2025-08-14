@@ -9,8 +9,7 @@ import { uploader } from '@/plugins/customPastePlugin'
 import useContent from '@/hooks/useContent'
 import emitter from '../events'
 import { htmlPlugin } from '@/plugins/hybridHtmlPlugin/rawHtmlPlugin'
-import mermaid from 'mermaid'
-import { mermaidPlugin } from '@/plugins/mermaidPlugin'
+// import { diagram } from '@/plugins/mermaidPlugin'
 
 const props = defineProps<{
   modelValue: string
@@ -52,15 +51,8 @@ onMounted(async () => {
     .use(automd)
     .use(upload)
     .use(htmlPlugin)
-    .use(mermaidPlugin)
 
   await crepe.create()
-  mermaid.initialize({
-    startOnLoad: true,
-    theme: 'default',
-    securityLevel: 'loose',
-  })
-  mermaid.run({ querySelector: 'div[data-type="diagram"]' });
   editor.ctx.update(uploadConfig.key, prev => ({ ...prev, uploader }))
   initScrollListener()
   // 滚动到指定位置
