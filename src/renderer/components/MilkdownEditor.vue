@@ -5,10 +5,10 @@ import { upload, uploadConfig } from '@milkdown/kit/plugin/upload'
 import { outline } from '@milkdown/kit/utils'
 import { automd } from '@milkdown/plugin-automd'
 import { onMounted } from 'vue'
-import { uploader } from '@/plugins/customPastePlugin'
 import useContent from '@/hooks/useContent'
-import emitter from '../events'
+import { uploader } from '@/plugins/customPastePlugin'
 import { htmlPlugin } from '@/plugins/hybridHtmlPlugin/rawHtmlPlugin'
+import emitter from '../events'
 // import { diagram } from '@/plugins/mermaidPlugin'
 
 const props = defineProps<{
@@ -51,6 +51,7 @@ onMounted(async () => {
     .use(automd)
     .use(upload)
     .use(htmlPlugin)
+    // .use(commonmark)
 
   await crepe.create()
   editor.ctx.update(uploadConfig.key, prev => ({ ...prev, uploader }))
@@ -58,7 +59,8 @@ onMounted(async () => {
   // 滚动到指定位置
   if (currentScrollRatio.value > 0) {
     const el = document.querySelector('.scrollView.milkdown')
-    if (!el) return
+    if (!el)
+      return
     const scrollHeight = el.scrollHeight || 0
     const targetScrollTop = scrollHeight * currentScrollRatio.value
     el.scrollTop = targetScrollTop
