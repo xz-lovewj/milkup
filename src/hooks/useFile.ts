@@ -141,7 +141,7 @@ function registerMenuEventsOnce() {
       }
 
       if (fullPath) {
-        // 如果有完整路径，通过 IPC 读取文件以获取正确的路径信息
+        // 如果有完整路径，通过IPC读取文件以获取正确的路径信息
         const result = await window.electronAPI.readFileByPath(fullPath)
         if (result) {
           // 处理图片路径
