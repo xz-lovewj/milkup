@@ -199,6 +199,64 @@ export function registerIpcHandleHandlers(win: Electron.BrowserWindow) {
     const response = await dialog.showMessageBox(win, options)
     return response
   })
+
+  // 显示文件覆盖确认对话框
+  ipcMain.handle('dialog:showOverwriteConfirm', async (_event, fileName: string) => {
+    const result = await dialog.showMessageBox(win, {
+      type: 'question',
+      buttons: ['取消', '覆盖', '保存'],
+      defaultId: 0,
+      title: '文件已存在',
+      message: `文件 "${fileName}" 已存在，是否要覆盖当前内容？`,
+      detail: '选择"保存"将先保存当前内容，然后打开新文件。',
+    })
+    return result.response
+  })
+
+  // 解析相对路径图片为绝对路径
+  ipcMain.handle('file:resolveImagePath', async (_event, markdownFilePath: string, imagePath: string) => {
+    if (!markdownFilePath || !imagePath) {
+      return imagePath
+    }
+
+    // 如果图片路径已经是绝对路径，直接返回
+    if (path.isAbsolute(imagePath)) {
+      return imagePath
+    }
+
+    // 获取 Markdown 文件所在的目录
+    const markdownDir = path.dirname(markdownFilePath)
+
+    // 将相对路径转换为绝对路径
+    const absoluteImagePath = path.resolve(markdownDir, imagePath)
+
+    // 检查文件是否存在
+    if (fs.existsSync(absoluteImagePath)) {
+      // 返回 file:// 协议的路径，这样 Electron 可以正确加载
+      const fileUrl = `file://${absoluteImagePath.replace(/\\/g, '/')}`
+      return fileUrl
+    }
+
+    return imagePath
+  })
+
+  // 通过文件路径读取 Markdown 文件（用于拖拽）
+  ipcMain.handle('file:readByPath', async (_event, filePath: string) => {
+    try {
+      if (!filePath || !fs.existsSync(filePath))
+        return null
+
+      const isMd = /\.(?:md|markdown)$/i.test(filePath)
+      if (!isMd)
+        return null
+
+      const content = fs.readFileSync(filePath, 'utf-8')
+      return { filePath, content }
+    } catch (error) {
+      console.error('Failed to read file:', error)
+      return null
+    }
+  })
 }
 
 export function close(win: Electron.BrowserWindow) {

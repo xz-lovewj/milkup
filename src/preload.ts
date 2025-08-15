@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, webUtils } from 'electron'
 
 contextBridge.exposeInMainWorld('electronAPI', {
   openFile: () => ipcRenderer.invoke('dialog:openFile'),
@@ -18,6 +18,24 @@ contextBridge.exposeInMainWorld('electronAPI', {
   openExternal: (url: string) => ipcRenderer.send('shell:openExternal', url),
   getFilePathInClipboard: () => ipcRenderer.invoke('clipboard:getFilePath'),
   writeTempImage: (file: File, tempPath: string) => ipcRenderer.invoke('clipboard:writeTempImage', file, tempPath),
+  // 图片路径解析
+  resolveImagePath: (markdownFilePath: string, imagePath: string) => ipcRenderer.invoke('file:resolveImagePath', markdownFilePath, imagePath),
+  // 通过路径读取文件（用于拖拽）
+  readFileByPath: (filePath: string) => ipcRenderer.invoke('file:readByPath', filePath),
+  // 显示文件覆盖确认对话框
+  showOverwriteConfirm: (fileName: string) => ipcRenderer.invoke('dialog:showOverwriteConfirm', fileName),
+  // 获取拖拽文件的真实路径
+  getPathForFile: (file: File) => {
+    try {
+      // 在 preload 脚本中直接访问 webUtils
+      // const { webUtils } = require('electron')
+      const result = webUtils?.getPathForFile(file)
+      return result
+    } catch (error) {
+      console.error('❌ preload 中 webUtils 不可用:', error)
+      return undefined
+    }
+  },
   // 主题编辑器相关
   openThemeEditor: (theme?: any) => ipcRenderer.send('open-theme-editor', theme),
   themeEditorWindowControl: (action: 'minimize' | 'maximize' | 'close') => ipcRenderer.send('theme-editor-window-control', action),
