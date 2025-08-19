@@ -8,8 +8,8 @@ import { onMounted } from 'vue'
 import useContent from '@/hooks/useContent'
 import { uploader } from '@/plugins/customPastePlugin'
 import { htmlPlugin } from '@/plugins/hybridHtmlPlugin/rawHtmlPlugin'
+import { diagram } from '@/plugins/mermaidPlugin'
 import emitter from '../events'
-// import { diagram } from '@/plugins/mermaidPlugin'
 
 const props = defineProps<{
   modelValue: string
@@ -51,7 +51,8 @@ onMounted(async () => {
     .use(automd)
     .use(upload)
     .use(htmlPlugin)
-    // .use(commonmark)
+    .use(diagram)
+  // .use(commonmark)
 
   await crepe.create()
   editor.ctx.update(uploadConfig.key, prev => ({ ...prev, uploader }))
