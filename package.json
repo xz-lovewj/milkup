@@ -1,6 +1,6 @@
 {
   "name": "milkup",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Markdown editor built with Milkdown and Vue.js",
   "author": "Larry Zhu",
   "license": "MIT",
@@ -130,7 +130,7 @@
         "name": "Markdown Document",
         "description": "Markdown File",
         "role": "Editor",
-        "icon": "src/assets/icons/milkup"
+        "icon": "src/assets/icons/file"
       }
     ],
     "nsis": {
