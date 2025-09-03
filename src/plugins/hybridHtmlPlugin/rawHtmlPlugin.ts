@@ -1,14 +1,13 @@
-import { MilkdownPlugin } from "@milkdown/kit/ctx"
-import { $nodeAttr, $nodeSchema } from "@milkdown/utils"
-import { $remark, $prose } from "@milkdown/utils"
-import { RootContent } from "mdast"
+import type { MilkdownPlugin } from '@milkdown/kit/ctx'
+import type { Node as ProseNode } from '@milkdown/prose/model'
+import type { EditorView, NodeViewConstructor } from '@milkdown/prose/view'
+import type { RootContent } from 'mdast'
+import { InputRule } from '@milkdown/prose/inputrules'
+import { Plugin, Selection } from '@milkdown/prose/state'
+
+import { $inputRule, $nodeAttr, $nodeSchema, $prose, $remark } from '@milkdown/utils'
 import { visit } from 'unist-util-visit'
-import { Plugin, Selection } from "@milkdown/prose/state"
-import { EditorView, NodeViewConstructor } from "@milkdown/prose/view"
-import { Node as ProseNode } from "@milkdown/prose/model"
-import { $inputRule } from "@milkdown/utils"
-import { InputRule } from "@milkdown/prose/inputrules"
-import { withMeta } from "../__internal__"
+import { withMeta } from '../__internal__'
 
 // 不转义 HTML 标签,即使输入 <div> 也能正常显示
 export const escapeAngleBracketRule = $inputRule(
@@ -16,7 +15,8 @@ export const escapeAngleBracketRule = $inputRule(
     /<([^>]+)>(.*)<\/([^>]+)>$/,
     (state, match, start, end) => {
       const [text] = match
-      if (!text) return null
+      if (!text)
+        return null
 
       // 将匹配到的 文本转换为 HTML 节点
       const tr = state.tr
@@ -30,8 +30,8 @@ export const escapeAngleBracketRule = $inputRule(
       // 返回修改后的 transaction
       return tr
     },
-    { inCode: false, inCodeMark: false } // 禁止在代码块中使用
-  )
+    { inCode: false, inCodeMark: false }, // 禁止在代码块中使用
+  ),
 )
 
 export function createHtmlNodeView(): NodeViewConstructor {
@@ -52,11 +52,12 @@ export function createHtmlNodeView(): NodeViewConstructor {
     rendered.innerHTML = node.attrs.value
     // 切换到编辑状态
     const enterEdit = () => {
-      if (editing) return
+      if (editing)
+        return
       editing = true
 
       // 更新编辑内容
-      contentDOM.innerText = rendered.innerHTML
+      contentDOM.textContent = rendered.innerHTML
       dom.innerHTML = ''
       dom.appendChild(contentDOM)
 
@@ -78,28 +79,30 @@ export function createHtmlNodeView(): NodeViewConstructor {
     }
     // 切换到渲染状态
     const exitEdit = () => {
-      if (!editing) return;
-      editing = false;
+      if (!editing)
+        return
+      editing = false
       // 构造并派发 transaction，更新节点 attrs.value
-      const newValue = contentDOM.innerText;
-      const tr = view.state.tr;
+      const newValue = contentDOM.textContent
+      const tr = view.state.tr
       tr.setNodeMarkup(
-        getPos() as number,               // 节点位置
-        undefined,         // 保持类型不变
-        { value: newValue } // 更新 attrs
-      );
-      view.dispatch(tr);
+        getPos() as number, // 节点位置
+        undefined, // 保持类型不变
+        { value: newValue }, // 更新 attrs
+      )
+      view.dispatch(tr)
       // 更新预览
-      rendered.innerHTML = newValue;
-      dom.innerHTML = '';
-      dom.appendChild(rendered);
-    };
+      rendered.innerHTML = newValue || ''
+      dom.innerHTML = ''
+      dom.appendChild(rendered)
+    }
 
     // 点击进入编辑
     document.addEventListener('selectionchange', handleSelectionChange)
     function handleSelectionChange() {
       const selection = document.getSelection()
-      if (!selection || !selection.anchorNode) return
+      if (!selection || !selection.anchorNode)
+        return
 
       const anchorNode = selection.anchorNode
       const inThisNode = dom.contains(anchorNode)
@@ -117,7 +120,8 @@ export function createHtmlNodeView(): NodeViewConstructor {
       dom,
       contentDOM,
       update(updatedNode) {
-        if (updatedNode.type !== node.type) return false
+        if (updatedNode.type !== node.type)
+          return false
         if (!editing) {
           rendered.innerHTML = updatedNode.attrs.value
         }
@@ -127,7 +131,7 @@ export function createHtmlNodeView(): NodeViewConstructor {
       stopEvent: () => editing,
       destroy() {
         document.removeEventListener('selectionchange', handleSelectionChange)
-      }
+      },
     }
   }
 }
@@ -147,7 +151,7 @@ export const proseHtml = $prose(() => {
             event.preventDefault()
             const { tr } = view.state
             const pos = selection.$anchor.end()
-            console.log('selection::: ', selection);
+
             tr.setSelection(Selection.near(tr.doc.resolve(pos + 1)))
             view.dispatch(tr)
             return true
@@ -163,7 +167,8 @@ export const proseHtml = $prose(() => {
 // remark AST 会把行内元素标签单独分开即 `<span>text</span>` 会被拆分成三个节点,这里将相邻的 HTML 开始标签、文本节点和结束标签合并为一个 HTML 节点
 export const remarkHtmlMerger = $remark('remarkHtmlMerger', () => () => (tree) => {
   visit(tree, (_node, _index, parent) => {
-    if (!parent || !Array.isArray(parent.children)) return
+    if (!parent || !Array.isArray(parent.children))
+      return
 
     const children = parent.children
 
@@ -173,17 +178,17 @@ export const remarkHtmlMerger = $remark('remarkHtmlMerger', () => () => (tree) =
       const close = children[i + 2]
 
       if (
-        open.type === 'html' &&
-        text.type === 'text' &&
-        close.type === 'html'
+        open.type === 'html'
+        && text.type === 'text'
+        && close.type === 'html'
       ) {
-        const openTagMatch = open.value.match(/^<([a-zA-Z][\w\-]*)[^>]*>$/)
-        const closeTagMatch = close.value.match(/^<\/([a-zA-Z][\w\-]*)>$/)
+        const openTagMatch = open.value.match(/^<([a-z][\w\-]*)(?:\s[^<>]*)?>$/i)
+        const closeTagMatch = close.value.match(/^<\/([a-z][\w\-]*)>$/i)
 
         if (
-          openTagMatch &&
-          closeTagMatch &&
-          openTagMatch[1] === closeTagMatch[1]
+          openTagMatch
+          && closeTagMatch
+          && openTagMatch[1] === closeTagMatch[1]
         ) {
           // 合并为一个新的 html 节点
           const combinedNode: RootContent = {
@@ -200,12 +205,15 @@ export const remarkHtmlMerger = $remark('remarkHtmlMerger', () => () => (tree) =
 // 将紧邻的 HTML 节点的文本节点拆分开来
 export const remarkHtmlSplitter = $remark('remarkHtmlSplitter', () => () => (tree) => {
   visit(tree, (node, index, parent) => {
-    if (!parent || (node.type !== 'html')) return
-    if (!('children' in parent)) return
+    if (!parent || (node.type !== 'html'))
+      return
+    if (!('children' in parent))
+      return
 
     const value: string = node.value
-    const htmlMatch = value.match(/^<([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>[\s\S]*<\/\1>/)
-    if (!htmlMatch) return
+    const htmlMatch = value.match(/^<([a-z][a-z0-9]*)\b[^>]*>[\s\S]*<\/\1>/i)
+    if (!htmlMatch)
+      return
 
     const htmlPart = htmlMatch[0]
     const rest = value.slice(htmlPart.length).trim()
@@ -218,11 +226,11 @@ export const remarkHtmlSplitter = $remark('remarkHtmlSplitter', () => () => (tre
       : null
     const children = parent.children
     const newNodes: RootContent[] = [newHtmlNode]
-    if (newTextNode) newNodes.push(newTextNode)
+    if (newTextNode)
+      newNodes.push(newTextNode)
     children.splice(index!, 1, ...newNodes)
   })
 })
-
 
 export const htmlAttr = $nodeAttr('html')
 
@@ -250,7 +258,7 @@ export const htmlSchema = $nodeSchema('html', (ctx) => {
       },
     },
     toMarkdown: {
-      match: (node) => node.type.name === 'html',
+      match: node => node.type.name === 'html',
       runner: (state, node) => {
         state.addNode('html', undefined, node.attrs.value)
       },

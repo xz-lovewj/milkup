@@ -7,6 +7,7 @@ import ColorPicker from '@/ui/ColorPicker.vue'
 import MilkdownEditor from './MilkdownEditor.vue'
 
 const { tempTheme, getAllCssVarsDes, getThemeByCn, addTempTheme, saveTheme, getEditingThemeFromStorage, clearEditingThemeFromStorage } = useTheme()
+const isWin = window.electronAPI.platform === 'win32'
 
 // 原始主题备份
 const originalThemeBackup = ref<any>(null)
@@ -186,7 +187,7 @@ console.log(text)
         主题编辑器
       </div>
       <div class="window-controls">
-        <span class="iconfont icon-close" @click="handleClose"></span>
+        <span v-if="isWin" class="iconfont icon-close" @click="handleClose"></span>
       </div>
     </div>
 

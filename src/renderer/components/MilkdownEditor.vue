@@ -66,10 +66,60 @@ onMounted(async () => {
     const targetScrollTop = scrollHeight * currentScrollRatio.value
     el.scrollTop = targetScrollTop
   }
+
+  followCodeMirrorCursor()
 })
 function emitOutlineUpdate(ctx: Ctx) {
   const headings = outline()(ctx)
   emitter.emit('outline:Update', headings)
+}
+function followCodeMirrorCursor() {
+  const TARGET_SELECTOR = '.ͼq.cm-cursor'
+
+  // 1. 定义 IntersectionObserver 回调
+  const intersectionCallback = (entries: any[]) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) {
+        entry.target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        })
+      }
+    })
+  }
+
+  // 2. 创建 IntersectionObserver（但不立即观察）
+  const observer = new IntersectionObserver(intersectionCallback, {
+    threshold: 0.1,
+  })
+
+  // 3. 使用 MutationObserver 监听 DOM 变化
+  const mutationObserver = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      // 检查是否有节点被添加
+      if (mutation.addedNodes.length) {
+        // 在新增的节点中查找目标元素
+        const target = document.querySelector(TARGET_SELECTOR)
+        if (target) {
+          observer.observe(target)
+          mutationObserver.disconnect() // 停止监听（可选）
+        }
+      }
+    })
+  })
+
+  // 4. 开始监听整个文档的 DOM 变化
+  mutationObserver.observe(document.body, {
+    childList: true, // 监听子节点的添加/删除
+    subtree: true, // 监听所有后代节点
+  })
+
+  // 5. 检查元素是否已经存在（避免等待 DOM 变化）
+  const existingTarget = document.querySelector(TARGET_SELECTOR)
+  if (existingTarget) {
+    observer.observe(existingTarget)
+    mutationObserver.disconnect() // 停止监听（可选）
+  }
 }
 </script>
 
@@ -92,10 +142,6 @@ function emitOutlineUpdate(ctx: Ctx) {
     height: 100%;
     overflow-y: auto;
     background: var(--background-color-1);
-
-    >div {
-      height: 100%;
-    }
   }
 }
 </style>

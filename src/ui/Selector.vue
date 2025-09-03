@@ -15,7 +15,7 @@ const modelValue = ref<string>(props.modelValue)
 const isActive = ref(false)
 function handleCheckItem(item: string) {
   modelValue.value = item
-  console.log('modelValue.value::: ', modelValue.value)
+
   emit('update:modelValue', modelValue.value)
   isActive.value = false
 }

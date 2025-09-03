@@ -50,8 +50,6 @@ function getFont() {
 function setFont(type: FontType, font: Font) {
   customFonts[type] = font
 
-  console.log(customFonts)
-
   // 保存到本地
   localStorage.setItem('custom-fonts', JSON.stringify(customFonts))
 

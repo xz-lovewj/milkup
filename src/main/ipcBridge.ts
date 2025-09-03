@@ -69,20 +69,16 @@ export function registerIpcOnHandlers(win: Electron.BrowserWindow) {
   // 主题编辑器窗口控制
   ipcMain.on('theme-editor-window-control', async (_event, action) => {
     try {
-      console.log('主题编辑器窗口控制:', action)
-
       // 直接导入并获取窗口引用
       const { createThemeEditorWindow } = await import('./index')
       const themeEditorWindow = await createThemeEditorWindow()
 
       if (!themeEditorWindow) {
-        console.log('主题编辑器窗口不存在')
         return
       }
 
       // 检查窗口是否已被销毁
       if (themeEditorWindow.isDestroyed()) {
-        console.log('主题编辑器窗口已被销毁')
         return
       }
 
@@ -95,13 +91,13 @@ export function registerIpcOnHandlers(win: Electron.BrowserWindow) {
 
       switch (action) {
         case 'minimize':
-          console.log('最小化主题编辑器窗口')
+
           if (!themeEditorWindow.isDestroyed()) {
             themeEditorWindow.minimize()
           }
           break
         case 'maximize':
-          console.log('最大化/还原主题编辑器窗口')
+
           if (!themeEditorWindow.isDestroyed()) {
             if (themeEditorWindow.isMaximized())
               themeEditorWindow.unmaximize()
@@ -110,13 +106,12 @@ export function registerIpcOnHandlers(win: Electron.BrowserWindow) {
           }
           break
         case 'close':
-          console.log('关闭主题编辑器窗口')
+
           if (!themeEditorWindow.isDestroyed()) {
             themeEditorWindow.close()
           }
           break
         default:
-          console.log('未知的窗口控制动作:', action)
       }
     } catch (error) {
       console.error('主题编辑器窗口控制错误:', error)
@@ -134,10 +129,9 @@ export function registerIpcOnHandlers(win: Electron.BrowserWindow) {
 export function registerIpcHandleHandlers(win: Electron.BrowserWindow) {
   // 获取系统字体列表
   ipcMain.handle('get-system-fonts', async () => {
-    console.log('获取系统字体列表')
     try {
       const fonts = await getFonts()
-      console.log(fonts)
+
       return fonts
     } catch (error) {
       console.error('获取系统字体失败:', error)
