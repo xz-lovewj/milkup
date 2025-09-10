@@ -5,7 +5,6 @@ import { upload, uploadConfig } from '@milkdown/kit/plugin/upload'
 import { outline } from '@milkdown/kit/utils'
 import { automd } from '@milkdown/plugin-automd'
 import { enhanceConfig } from '@renderer/enhance/crepe/config'
-import container from '@renderer/enhance/plugins/container'
 import { onMounted } from 'vue'
 import useContent from '@/hooks/useContent'
 import { uploader } from '@/plugins/customPastePlugin'
@@ -51,7 +50,7 @@ onMounted(async () => {
     .use(upload)
     .use(htmlPlugin)
     .use(diagram)
-    .use(container)
+    // .use(container)
   // .use(commonmark)
 
   await crepe.create()
