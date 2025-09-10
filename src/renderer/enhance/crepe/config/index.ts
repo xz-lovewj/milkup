@@ -1,5 +1,6 @@
 import type { EnhanceBlockEditFeatureConfig, EnhanceCrepeFeatureConfig } from '@renderer/enhance/crepe/types'
 import { CrepeFeature } from '@milkdown/crepe'
+import autolog from 'autolog.js'
 
 export const enhanceBlockEditConfig: EnhanceBlockEditFeatureConfig = {
   textGroup: {
@@ -81,17 +82,18 @@ export const enhanceConfig: EnhanceCrepeFeatureConfig = {
   [CrepeFeature.CodeMirror]: {
     searchPlaceholder: '搜索语言',
     noResultText: '暂无匹配',
+    copyText: '复制',
     onCopy: (_) => {
-      // TODO 提示
+      autolog.log('复制成功', 'success')
     },
   },
   [CrepeFeature.LinkTooltip]: {
     onCopyLink: (_) => {
-      // TODO 提示
+      autolog.log('复制成功', 'success')
     },
   },
   [CrepeFeature.Placeholder]: {
-    text: '不积跬步，无以至千里......',
+    text: '开始写点什么吧...',
     mode: 'doc',
   },
   [CrepeFeature.BlockEdit]: enhanceBlockEditConfig,
